@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Admin Dashboard</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Chart.js for graphs -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            padding-top: 56px;
+        }
+        .sidebar {
+            height: 100vh; /* Full-height */
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 100;
+            background-color: #f8f9fa;
+            padding-top: 20px;
+        }
+       
+         .sidebar {
+            background-color: #30b570;
+            height: 100vh;
+            width: 200px;
+            position: fixed;
+        }
+        .sidebar .nav-link.active {
+            background-color: #28a745;
+        }
+        .content {
+            margin-left: 200px;
+            padding: 20px;
+        }
+        .card {
+            margin-bottom: 20px;
+        }
+        .header-logo img {
+            max-height: 50px;
+        }
+        .filter-form {
+            margin-bottom: 20px;
+        }
+        .chart-container {
+            position: relative;
+            height: 400px;
+        }
+        .table-container {
+            max-height: 250px;
+            overflow-y: auto;
+        }
+   
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        thead th {
+            background-color: #f4f4f4;
+        }
+        form {
+             padding: 10px;
+        }
+
+     .custom-modal .modal-dialog {
+        max-width: 400px;
+    }
+    .modal-right .modal-dialog {
+        position: fixed;
+        top: 50%;
+        right: 0;
+        transform: translateY(-50%);
+        margin: 0;
+    }
+
+    .close {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+    }
+
+    .close:hover,
+    .close:focus {
+        color: black;
+        text-decoration: none;
+        cursor: pointer;
+    }
+
+    </style>
+</head>
+<body>
+<!-- Navbar -->
+<nav class="navbar navbar-expand-md navbar-light fixed-top" style="background-color:#4ea375;">
+    <div class="header-logo">
+        <img src="https://kippra.or.ke/wp-content/uploads/2020/12/KIPPRA-logo.png" alt="KIPPRA Logo">
+    </div>
+    <a class="navbar-brand text-white" href="/dashboard">Dashboard</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+                <a class="nav-link text-white" href="#" onclick="showContent('profile')">Profile</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-white" href="/logout">Logout</a>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+<!-- Sidebar -->
+<div class="sidebar">
+    <ul class="nav flex-column">
+        <li class="nav-item">
+            <a class="nav-link active text-white" href="/dashboard" onclick="showContent('dashboard')"><i
+                    class="fas fa-home"></i> Dashboard</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link text-white" href="/dashboard"><i class="fas fa-comments"></i> Feedback</a>
+        </li>
+        {% if user_role == 'admin' %}
+        <li class="nav-item">
+            <a class="nav-link text-white" href="#" onclick="showContent('users')"><i class="fas fa-users"></i>
+                Users</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link text-white" href="#" onclick="showContent('user_register')"><i
+                    class="fas fa-user-plus"></i> Register User</a>
+        </li>
+        {% endif %}
+        <li class="nav-item">
+            <a class="nav-link text-white" href="/logout"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+        </li>
+    </ul>
+</div>
+
+<!-- Main Content -->
+<div class="content" id="content-area">
+    <h2>Dashboard Overview</h2>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <div class="alert alert-{{ messages[0][0] }}">
+        {{ messages[0][1] }}
+    </div>
+    {% endif %}
+    {% endwith %}
+
+    <!-- Filter Form -->
+    <div class="filter-form">
+        <form id="filterForm">
+            <div class="form-row">
+                <div class="col-md-4 mb-3">
+                    <label for="startDate">Start Date</label>
+                    <input type="date" class="form-control" id="startDate" name="startDate">
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label for="endDate">End Date</label>
+                    <input type="date" class="form-control" id="endDate" name="endDate">
+                </div>
+                <div class="col-md-4 mb-3">
+                    <button type="button" class="btn btn-primary mt-4" onclick="fetchFeedback()">Filter</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- Dashboard Layout -->
+    <div class="row">
+        <!-- Feedback Table -->
+        <div class="col-md-6">
+            <div class="table-container">
+                <table class="table table-striped table-bordered" id="feedbackTable">
+                    <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Age</th>
+                        <th>Gender</th>
+                        <th>Pwd</th>
+                        <th>Organization</th>
+                        <th>Department</th>
+                        <th>Service</th>
+                        <th>Activity/Product</th>
+                        <th>Interacted With</th>
+                        <th>Person Attitude</th>
+                        <th>Recommend</th>
+                        <th>Comments</th>
+                        <th>Phone</th>
+                        <th>Email</th>
+                        <th>Create Date</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <!-- Table rows will be inserted here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+
+        <!-- Bar Chart -->
+        <div class="col-md-6">
+            <div class="chart-container">
+                <canvas id="feedbackChart"></canvas>
+            </div>
+        </div>
+
+    </div>
+    <div class="row mt-4">
+        <div class="col-sm-6">
+            <h2>Most Visited Departments</h2>
+            <canvas id="departmentPieChart"></canvas>
+        </div>
+    </div>
+</div>
+</div>
+
+<!-- Bootstrap JS and dependencies -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<!-- JavaScript to handle charts -->
+<script>
+    let feedbackChart;  // Global variable to store the chart instance
+
+function loadFeedbackChart() {
+fetch('/user-stats')
+    .then(response => response.json())
+    .then(data => {
+        const ctx = document.getElementById('feedbackChart').getContext('2d');
+
+        // Destroy the existing chart instance if it exists
+        if (feedbackChart) {
+            feedbackChart.destroy();
+        }
+
+        // Create a new chart instance
+        feedbackChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: data.map(item => item.month),
+                datasets: [{
+                    label: 'Feedback Count',
+                    data: data.map(item => item.count),
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    x: {
+                        beginAtZero: true
+                    },
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    })
+    .catch(error => {
+        console.error('Error fetching feedback:', error);
+    });
+}
+
+    function loadDepartmentPieChart() {
+        const startDate = '2024-01-01'; // Replace with your desired start date
+        const endDate = '2024-12-31';   // Replace with your desired end date
+
+        fetch(`/department-pie-chart?start_date=${startDate}&end_date=${endDate}`)
+            .then(response => response.json())
+            .then(data => {
+                const ctx = document.getElementById('departmentPieChart').getContext('2d');
+                new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: data.map(item => item.department),
+                        datasets: [{
+                            label: 'Department Visits',
+                            data: data.map(item => item.count),
+                            backgroundColor: [
+                                'rgba(255, 99, 132, 0.2)',
+                                'rgba(54, 162, 235, 0.2)',
+                                'rgba(255, 206, 86, 0.2)',
+                                'rgba(75, 192, 192, 0.2)',
+                                'rgba(153, 102, 255, 0.2)',
+                                'rgba(255, 159, 64, 0.2)'
+                            ],
+                            borderColor: [
+                                'rgba(255, 99, 132, 1)',
+                                'rgba(54, 162, 235, 1)',
+                                'rgba(255, 206, 86, 1)',
+                                'rgba(75, 192, 192, 1)',
+                                'rgba(153, 102, 255, 1)',
+                                'rgba(255, 159, 64, 1)'
+                            ],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: {
+                                position: 'top',
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(tooltipItem) {
+                                        return tooltipItem.label + ': ' + tooltipItem.raw + ' visits';
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            });
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        loadFeedbackChart();
+        loadDepartmentPieChart();
+    });
+</script>
+<!-- JavaScript to handle dynamic content -->
+<script>
+    function showContent(page) {
+        fetch(`/content/${page}`)
+            .then(response => response.text())
+            .then(html => {
+                document.getElementById('content-area').innerHTML = html;
+                if (page === 'dashboard') {
+                    loadDashboardData();
+                } else if (page === 'profile') {
+                    // Fetch profile data after loading the profile page
+                    fetch('/profile')
+                        .then(response => response.json())
+                        .then(data => {
+                            console.log('Profile Data:', data); // Debug logging
+                            populateProfileForm(data);
+                        })
+                        .catch(error => console.error('Error fetching profile data:', error));
+                } else if (page === 'users') {
+                    fetchUsers(); // Fetch and display users data if needed
+                }
+            })
+            .catch(error => console.error('Error loading content:', error));
+    }
+
+    function fetchUsers() {
+        fetch('/users')
+            .then(response => response.json())
+            .then(data => {
+                console.log('Users Data:', data); // Debug logging
+                const tableBody = document.querySelector('#usersTable tbody');
+                tableBody.innerHTML = '';
+               data.forEach(user => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${user.first_name}</td>
+                    <td>${user.last_name}</td>
+                    <td>${user.email}</td>
+                    <td>${user.role}</td>
+                    <td>${user.create_date}</td>
+                    <td>
+                        <button class="btn btn-primary" onclick="showChangePasswordForm(${user.id}, 'center')">
+                            <i class="fas fa-key"></i>
+                        </button>
+                        <button class="btn btn-danger" onclick="showDeleteUserForm(${user.id}, 'center')">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    </td>
+                `;
+                tableBody.appendChild(tr);
+                });
+            })
+            .catch(error => console.error('Error fetching users:', error));
+    }
+   function closeModal(modalId) {
+        $('#' + modalId).modal('hide');
+    }
+
+    function showChangePasswordForm(userId, position = 'center') {
+        $('#changeUserId').val(userId);
+        if (position === 'right') {
+            $('#changePasswordModal').addClass('modal-right');
+        } else {
+            $('#changePasswordModal').removeClass('modal-right');
+        }
+        $('#changePasswordModal').modal('show');
+    }
+
+    function showDeleteUserForm(userId, position = 'center') {
+        $('#deleteUserId').val(userId);
+        if (position === 'right') {
+            $('#deleteUserModal').addClass('modal-right');
+        } else {
+            $('#deleteUserModal').removeClass('modal-right');
+        }
+        $('#deleteUserModal').modal('show');
+    }
+
+    function populateProfileForm(data) {
+        document.getElementById('first_name').value = data.first_name;
+        document.getElementById('last_name').value = data.last_name;
+        document.getElementById('email').value = data.email;
+    }
+
+    function fetchFeedback() {
+        const startDate = document.getElementById('startDate').value;
+        const endDate = document.getElementById('endDate').value;
+
+        console.log(`Fetching feedback for dates: ${startDate} to ${endDate}`); // Debug logging
+
+        fetch(`/feedback?start_date=${startDate}&end_date=${endDate}`)
+            .then(response => response.json())
+            .then(data => {
+                console.log('Feedback Data:', data); // Debug logging
+                const tableBody = document.querySelector('#feedbackTable tbody');
+                tableBody.innerHTML = '';
+                data.forEach(row => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${row.name}</td>
+                        <td>${row.age}</td>
+                        <td>${row.gender}</td>
+                        <td>${row.pwd}</td>
+                        <td>${row.organization}</td>
+                        <td>${row.departments}</td>
+                        <td>${row.service}</td>
+                        <td>${row.activity_or_product}</td>
+                        <td>${row.interacted_with}</td>
+                        <td>${row.person_attitude}</td>
+                        <td>${row.recommend}</td>
+                        <td>${row.comments}</td>
+                        <td>${row.phone}</td>
+                        <td>${row.email}</td>
+                        <td>${row.create_date}</td>
+                    `;
+                    tableBody.appendChild(tr);
+                });
+
+                // Update bar chart after table data is loaded
+                updateFeedbackChart(data);
+            })
+            .catch(error => console.error('Error fetching feedback:', error));
+    }
+
+    function updateFeedbackChart(feedbackData) {
+        // Group feedback data by date
+        const feedbackGroupedByDate = feedbackData.reduce((acc, curr) => {
+            const date = curr.create_date.split('T')[0]; // Format the date for grouping
+            if (!acc[date]) {
+                acc[date] = 0;
+            }
+            acc[date] += 1;
+            return acc;
+        }, {});
+
+        const labels = Object.keys(feedbackGroupedByDate);
+        const counts = Object.values(feedbackGroupedByDate);
+
+        const ctx = document.getElementById('feedbackChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Feedback Count',
+                    data: counts,
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    x: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Date Registered'
+                        }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Count'
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    function loadDashboardData() {
+        fetch(`/user-stats`)
+            .then(response => response.json())
+            .then(data => {
+                console.log('User Stats Data:', data); // Debug logging
+                const ctx = document.getElementById('userChart').getContext('2d');
+                new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: data.labels,
+                        datasets: [{
+                            label: 'Users Created',
+                            data: data.counts,
+                            borderColor: 'rgba(75, 192, 192, 1)',
+                            backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            x: {
+                                beginAtZero: true
+                            },
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+            })
+            .catch(error => console.error('Error loading user stats:', error));
+    }
+</script>
+
+
+</body>
+</html>

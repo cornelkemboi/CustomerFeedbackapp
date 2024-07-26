@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Customer Satisfaction Survey</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.css"/>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
+    <style>
+        header {
+            padding: 1px 0;
+        }
+        .header-logo img {
+            max-height: 50px;
+        }
+        .header-title {
+            margin-left: 20px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        footer {
+            padding: 20px 0;
+            margin-top: 0px;
+        }
+        div-body {
+          padding: 20px 0;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+{% include 'header.html' %}
+<div class="">
+    <div class="row">
+        <div class="col-1" style="background-color:#dee0df;"></div>
+        <div class="col-10" style="background-color:#f2f5f3;">
+            <h5 class="text-center text-success font-weight-bold">Quick Online Customer Satisfaction Survey</h5>
+            <form id="feedback-form" action="/" method="post">
+                <p class="lead text-success">Our dear customer, we value your feedback. Please take time to fill our
+                    short
+                    questionnaire below:</p>
+                <p class="font-weight-bold"><span class="text-danger">Required*</span></p>
+
+                <div class="form-group">
+                    <label for="name" class="text-success font-weight-bold">1. Name<span
+                            class="text-danger">*</span></label>
+                    <input type="text" class="form-control" id="name" name="name" placeholder="Input your names here"
+                           required>
+                </div>
+
+                <div class="form-group">
+                    <label class="text-success font-weight-bold">2. Age<span class="text-danger">*</span></label><br>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" id="less-than-35" name="age" value="less-than-35"
+                               required>
+                        <label class="form-check-label" for="less-than-35">< 35</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" id="greater-than-35" name="age"
+                               value="greater-than-35"
+                               required>
+                        <label class="form-check-label" for="greater-than-35">> 35</label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="text-success font-weight-bold">3. Gender<span class="text-danger">*</span></label><br>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" id="Female" name="gender" value="female" required>
+                        <label class="form-check-label" for="Female">Female</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" id="Male" name="gender" value="male" required>
+                        <label class="form-check-label" for="Male">Male</label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="text-success font-weight-bold">4. PWD<span class="text-danger">*</span></label><br>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" id="Yes" name="pwd" value="Yes" required>
+                        <label class="form-check-label" for="Yes">Yes</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" id="No" name="pwd" value="No" required>
+                        <label class="form-check-label" for="No">No</label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="organization" class="text-success font-weight-bold">5. Organization<span
+                            class="text-danger">*</span></label>
+                    <input type="text" class="form-control" id="organization" name="organization"
+                           placeholder="Input your Organization" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="text-success font-weight-bold">6. Which department(s) did you interact with?<span
+                            class="text-danger">*</span></label><br>
+                    <div id="department-options">
+                        <!-- Options will be populated dynamically -->
+                        <div class="error-message" id="error-message">Please select at least one department.</div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="service" class="text-success font-weight-bold">7. What type of service did you
+                        seek?<span
+                                class="text-danger">*</span></label>
+                    <input type="text" class="form-control" id="service" name="service" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="activity_or_product" class="text-success font-weight-bold">8. If you accessed a product
+                        or
+                        participated in an activity, indicate the name<span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" id="activity_or_product" name="activity_or_product"
+                           required>
+                </div>
+
+                <div class="form-group">
+                    <label for="interacted_with" class="text-success font-weight-bold">9. Whom did you interact
+                        with?</label>
+                    <input type="text" class="form-control" id="interacted_with" name="interacted_with">
+                </div>
+
+                <div class="form-group">
+                    <label class="text-success font-weight-bold">10. The person you interacted with was knowledgeable,
+                        portrayed
+                        a good attitude and served you effectively:</label><br>
+                    <div class="text-success font-italic">(1 star=Poor, 2 stars=Fair, 3 Stars=Neutral, 4 Stars = Good
+                        and 5
+                        Stars=Excellent)<br></div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" id="attitude_1" name="person_attitude" value="1">
+                        <label class="form-check-label" for="attitude_1">1</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" id="attitude_2" name="person_attitude" value="2">
+                        <label class="form-check-label" for="attitude_2">2</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" id="attitude_3" name="person_attitude" value="3">
+                        <label class="form-check-label" for="attitude_3">3</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" id="attitude_4" name="person_attitude" value="4">
+                        <label class="form-check-label" for="attitude_4">4</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" id="attitude_5" name="person_attitude" value="5">
+                        <label class="form-check-label" for="attitude_5">5</label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="text-success font-weight-bold">11. I would recommend KIPPRA to my organization,
+                        partners,
+                        friends, and stakeholders<span class="text-danger">*</span></label><br>
+                    <div class="text-success font-italic"> (1 star=Poor, 2 stars=Fair, 3 Stars=Neutral, 4 Stars = Good
+                        and 5
+                        Stars=Excellent)<br></div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" id="recommend_1" name="recommend" value="1"
+                               required>
+                        <label class="form-check-label" for="recommend_1">1</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input star-cb-group" type="radio" id="recommend_2" name="recommend"
+                               value="2"
+                               required>
+                        <label class="form-check-label" for="recommend_2">2</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" id="recommend_3" name="recommend" value="3"
+                               required>
+                        <label class="form-check-label" for="recommend_3">3</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" id="recommend_4" name="recommend" value="4"
+                               required>
+                        <label class="form-check-label" for="recommend_4">4</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" id="recommend_5" name="recommend" value="5"
+                               required>
+                        <label class="form-check-label" for="recommend_5">5</label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="comments" class="text-success font-weight-bold">12. Any additional comments or
+                        suggestions
+                        on
+                        how to improve KIPPRA products and services:</label>
+                    <input type="text" class="form-control" id="comments" name="comments">
+                </div>
+
+                <div class="form-group">
+                    <label class="text-success font-weight-bold">
+                        13. If you want us to reach you for our marketing products and activities, please enter your
+                        contact
+                        details:
+                    </label>
+                    <div class="form-row">
+                        <div class="form-group col-md-6 d-flex">
+                            <label for="phone" class="text-success mr-2">Phone Number:</label>
+                            <input type="tel" class="form-control w-75" id="phone" name="phone"
+                                   placeholder="+2547.....">
+                        </div>
+                        <div class="form-group col-md-6 d-flex align-items-center">
+                            <label for="email" class="text-success mr-2">Email Address:</label>
+                            <input type="email" class="form-control w-75" id="email" name="email"
+                                   placeholder="Email address">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-12 text-center">
+                    <button type="submit" class="btn btn-success btn-lg btn-block" style="margin-bottom: 25px;">Submit
+                    </button>
+                </div>
+            </form>
+        </div>
+        <div class="col-1" style="background-color:#dee0df;"></div>
+    </div>
+</div>
+</body>
+{% include 'footer.html' %}
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Function to populate departments
+        function populateDepartments() {
+            fetch('/departments')
+                .then(response => response.json())
+                .then(data => {
+                    const container = document.getElementById('department-options');
+                    data.forEach(department => {
+                        const div = document.createElement('div');
+                        div.classList.add('form-check');
+                        div.innerHTML = `
+                            <input class="form-check-input" type="checkbox" id="dept-${department.id}" name="departments[]" value="${department.id}">
+                            <label class="form-check-label" for="dept-${department.id}">${department.name}</label>
+                        `;
+                        container.appendChild(div);
+                    });
+                })
+                .catch(error => console.error('Error loading departments:', error));
+        }
+
+        // Function to handle form submission
+        function handleFormSubmission(formId, errorMessageId) {
+            const form = document.getElementById(formId);
+            form.addEventListener('submit', function(event) {
+                const checkboxes = form.querySelectorAll('input[name="departments[]"]');
+                const checked = Array.from(checkboxes).some(checkbox => checkbox.checked);
+
+                if (!checked) {
+                    event.preventDefault(); // Prevent form submission
+                    document.getElementById(errorMessageId).style.display = 'block';
+                } else {
+                    document.getElementById(errorMessageId).style.display = 'none';
+
+                    // Clear the department options and form fields
+                    document.getElementById('department-options').innerHTML = '';
+                    form.reset();
+
+                    // Optionally, you can display a success message
+                    alert('Form submitted successfully. Thank you!');
+                }
+            });
+        }
+
+        // Populate departments and handle form submissions
+        populateDepartments();
+        handleFormSubmission('feedback-form', 'error-message');
+        handleFormSubmission('department-form', 'error-message');
+    });
+</script>
+
+</html>
