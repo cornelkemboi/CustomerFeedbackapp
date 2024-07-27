@@ -5,7 +5,7 @@ from flask import Blueprint, request, jsonify, flash, render_template
 from sqlalchemy import func
 
 from app import db
-from app.models import SurveyResponse, SurveyResponseDepartment, Department, RegisterUser
+from app.models import SurveyResponse, SurveyResponseDepartment, Department, RegisterUser, Quarter
 from app.schemas import DepartmentSchema, SurveyResponseSchema, DepartmentPieChartSchema, RegisterUserSchema, \
     UserStatsSchema
 from app.views.auth import login_required
@@ -54,7 +54,11 @@ def feedback():
         # Serialize survey response
         response_data = SurveyResponseSchema().dump(response)
         response_data['departments'] = ", ".join(department_names)
+        create_date = datetime.fromisoformat(response_data['create_date'].replace('Z', '+00:00'))
 
+        # Format the date to include only day and hour
+        formatted_date = create_date.strftime('%d/%m/%Y %H:%M:%S')
+        response_data['create_date'] = formatted_date
         feedback_data.append(response_data)
 
     return jsonify(feedback_data)
@@ -162,17 +166,30 @@ def load_content(page):
 @bp.route('/user-stats', methods=['GET'])
 @login_required
 def user_stats_route():
-    # Query the database using SQLAlchemy
+    # Define the subquery for quarters
+    quarters_subquery = db.session.query(
+        Quarter.name.label('quarter'),
+        Quarter.start_date,
+        Quarter.end_date
+    ).subquery()
+
+    # Join with the quarters table
     stats = db.session.query(
-        func.date_format(SurveyResponse.create_date, '%Y-%m').label('month'),
+        func.year(SurveyResponse.create_date).label('year'),
+        quarters_subquery.c.quarter,
         func.count(SurveyResponse.id).label('count')
-    ).group_by('month').all()
+    ).join(
+        quarters_subquery,
+        SurveyResponse.create_date.between(quarters_subquery.c.start_date, quarters_subquery.c.end_date)
+    ).group_by('year', 'quarter').all()
 
     # Convert the result to a list of dictionaries
-    user_stats = [{'month': stat.month, 'count': stat.count} for stat in stats]
+    user_stats = [
+        {'year': stat.year, 'quarter': stat.quarter, 'count': stat.count}
+        for stat in stats
+    ]
 
     # Serialize the data using Marshmallow
     user_stats_schema = UserStatsSchema(many=True)
     user_stats_json = user_stats_schema.dump(user_stats)
-
     return jsonify(user_stats_json)

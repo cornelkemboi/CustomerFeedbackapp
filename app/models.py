@@ -42,3 +42,15 @@ class SurveyResponseDepartment(db.Model):
     __tablename__ = 'survey_response_departments'
     survey_response_id = db.Column(db.Integer, db.ForeignKey('survey_responses.id'), primary_key=True)
     department_id = db.Column(db.Integer, db.ForeignKey('departments.id'), primary_key=True)
+
+
+class Quarter(db.Model):
+    __tablename__ = 'quarters'
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(2), nullable=False)
+    start_date = db.Column(db.Date, nullable=False)
+    end_date = db.Column(db.Date, nullable=False)
+
+    def __repr__(self):
+        return f'<Quarter {self.name}>'

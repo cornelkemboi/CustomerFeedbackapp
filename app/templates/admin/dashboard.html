@@ -48,25 +48,67 @@
             position: relative;
             height: 400px;
         }
+        /* Container for the table */
         .table-container {
-            max-height: 250px;
-            overflow-y: auto;
-        }
-   
-        table {
-            width: 100%;
-            border-collapse: collapse;
+            max-height: 250px; /* Set the desired height for the scrollable area */
+            overflow-y: auto; /* Enable vertical scrolling */
+            overflow-x: auto; /* Allow horizontal scrolling if needed */
+            border: 1px solid #ddd; /* Optional: adds border around the table */
         }
 
-        th, td {
-            padding: 10px;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
+        /* Table styling */
+        table {
+            width: 100%;
+            border-collapse: collapse; /* Ensures borders collapse into one */
+        }
+
+        /* Fixed header styling */
+        thead {
+            display: table;
+            width: 100%;
+            table-layout: fixed; /* Ensures columns are properly aligned */
         }
 
         thead th {
-            background-color: #f4f4f4;
+            position: -webkit-sticky; /* For Safari */
+            position: sticky; /* For modern browsers */
+            top: 0; /* Stick to the top */
+            z-index: 1; /* Ensure header is above body content */
+            background-color: #f4f4f4; /* Match background with header */
+            border-bottom: 2px solid #ddd; /* Border to separate header from body */
+            font-size: 12px; /* Reduce font size for the header cells */
         }
+
+        /* Styling for the table cells */
+       th, td {
+            padding: 8px; /* Reduce padding to fit smaller text */
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+            font-size: 12px; /* Reduce font size for table cells */
+            overflow: hidden; /* Hide overflowing content */
+/*            ;text-overflow: ellipsis; /* Show ellipsis for overflowing text */*/
+            white-space: nowrap; /* Prevent text from wrapping to the next line */
+        }
+
+        /* Ensures the table body scrolls while header remains fixed */
+        tbody {
+            display: block;
+             overflow-y: auto; /* Vertical scroll */
+    overflow-x: auto; /* Horizontal scroll */
+            height: 250px; /* Match the max-height of the container */
+        }
+
+        /* Ensure rows are displayed correctly and align with headers */
+        tbody tr {
+            display: table;
+            width: 100%;
+            table-layout: fixed; /* Ensures column width is consistent */
+        }
+
+        table td, table th {
+            box-sizing: border-box; /* Includes padding and border in the element's total width and height */
+        }
+
         form {
              padding: 10px;
         }
@@ -94,6 +136,9 @@
         color: black;
         text-decoration: none;
         cursor: pointer;
+    }
+    .horizontal-line {
+       border-bottom: 2px solid black;
     }
 
     </style>
@@ -149,7 +194,7 @@
 
 <!-- Main Content -->
 <div class="content" id="content-area">
-    <h2>Dashboard Overview</h2>
+    <h4>Dashboard Overview</h4>
     {% with messages = get_flashed_messages(with_categories=true) %}
     {% if messages %}
     <div class="alert alert-{{ messages[0][0] }}">
@@ -159,71 +204,70 @@
     {% endwith %}
 
     <!-- Filter Form -->
-    <div class="filter-form">
-        <form id="filterForm">
-            <div class="form-row">
-                <div class="col-md-4 mb-3">
-                    <label for="startDate">Start Date</label>
-                    <input type="date" class="form-control" id="startDate" name="startDate">
+    <!-- Bar Chart -->
+    <div class="" style="background-color:#dff2e8;">
+        <div class="chart-container">
+            <canvas id="feedbackChart"></canvas>
+        </div>
+    </div>
+    <div class="horizontal-line"></div>
+    <div class="row" style="background-color:#f7fcfa;">
+        <div class="filter-form col-md-10">
+            <form id="filterForm">
+                <div class="form-row">
+                    <div class="col-md-2 mb-3">
+                        <label for="startDate">Start Date</label>
+                        <input type="date" class="form-control" id="startDate" name="startDate">
+                    </div>
+                    <div class="col-md-2 mb-3">
+                        <label for="endDate">End Date</label>
+                        <input type="date" class="form-control" id="endDate" name="endDate">
+                    </div>
+                    <div class="col-md-2 mb-3">
+                        <button type="button" class="btn btn-primary mt-4" onclick="fetchFeedback()">Filter</button>
+                    </div>
                 </div>
-                <div class="col-md-4 mb-3">
-                    <label for="endDate">End Date</label>
-                    <input type="date" class="form-control" id="endDate" name="endDate">
-                </div>
-                <div class="col-md-4 mb-3">
-                    <button type="button" class="btn btn-primary mt-4" onclick="fetchFeedback()">Filter</button>
-                </div>
-            </div>
-        </form>
+
+            </form>
+        </div>
     </div>
 
     <!-- Dashboard Layout -->
-    <div class="row">
-        <!-- Feedback Table -->
-        <div class="col-md-6">
-            <div class="table-container">
-                <table class="table table-striped table-bordered" id="feedbackTable">
-                    <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Age</th>
-                        <th>Gender</th>
-                        <th>Pwd</th>
-                        <th>Organization</th>
-                        <th>Department</th>
-                        <th>Service</th>
-                        <th>Activity/Product</th>
-                        <th>Interacted With</th>
-                        <th>Person Attitude</th>
-                        <th>Recommend</th>
-                        <th>Comments</th>
-                        <th>Phone</th>
-                        <th>Email</th>
-                        <th>Create Date</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <!-- Table rows will be inserted here -->
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-
-        <!-- Bar Chart -->
-        <div class="col-md-6">
-            <div class="chart-container">
-                <canvas id="feedbackChart"></canvas>
-            </div>
-        </div>
-
+    <div class="table-container">
+        <table class="table table-striped table-bordered" id="feedbackTable">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Age</th>
+                    <th>Gender</th>
+                    <th>Pwd</th>
+                    <th>Organization</th>
+                    <th>Department</th>
+                    <th>Service</th>
+                    <th>Activity/Product</th>
+                    <th>Interacted With</th>
+                    <th>Person Attitude</th>
+                    <th>Recommend</th>
+                    <th>Comments</th>
+                    <th>Phone</th>
+                    <th>Email</th>
+                    <th>Create Date</th>
+                </tr>
+            </thead>
+            <tbody>
+    
+                <!-- More rows as needed -->
+            </tbody>
+        </table>
     </div>
-    <div class="row mt-4">
-        <div class="col-sm-6">
-            <h2>Most Visited Departments</h2>
+    <div class="horizontal-line"></div>
+    <div class="row mt-4" style="background-color:#dff2e8;">
+        <div class="col-sm-10">
+            <h4>Most Visited Departments</h4>
             <canvas id="departmentPieChart"></canvas>
         </div>
     </div>
+    <div class="horizontal-line"></div>
 </div>
 </div>
 
@@ -234,48 +278,80 @@
 
 <!-- JavaScript to handle charts -->
 <script>
+
     let feedbackChart;  // Global variable to store the chart instance
 
-function loadFeedbackChart() {
-fetch('/user-stats')
-    .then(response => response.json())
-    .then(data => {
-        const ctx = document.getElementById('feedbackChart').getContext('2d');
+    function loadFeedbackChart() {
+        fetch('/user-stats')
+            .then(response => response.json())
+            .then(data => {
+                const ctx = document.getElementById('feedbackChart').getContext('2d');
 
-        // Destroy the existing chart instance if it exists
-        if (feedbackChart) {
-            feedbackChart.destroy();
-        }
-
-        // Create a new chart instance
-        feedbackChart = new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: data.map(item => item.month),
-                datasets: [{
-                    label: 'Feedback Count',
-                    data: data.map(item => item.count),
-                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                    borderColor: 'rgba(75, 192, 192, 1)',
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                scales: {
-                    x: {
-                        beginAtZero: true
-                    },
-                    y: {
-                        beginAtZero: true
-                    }
+                // Destroy the existing chart instance if it exists
+                if (feedbackChart) {
+                    feedbackChart.destroy();
                 }
-            }
-        });
-    })
-    .catch(error => {
-        console.error('Error fetching feedback:', error);
-    });
-}
+
+                // Prepare the labels and data
+                const labels = data.map(item => {
+                    let quarterLabel = '';
+                    switch (item.quarter) {
+                        case 'Q1':
+                            quarterLabel = `Q1 (1st July ${item.year} - 30th September ${item.year})`;
+                            break;
+                        case 'Q2':
+                            quarterLabel = `Q2 (1st October ${item.year} - 31st December ${item.year})`;
+                            break;
+                        case 'Q3':
+                            quarterLabel = `Q3 (1st January ${item.year} - 31st March ${item.year})`;
+                            break;
+                        case 'Q4':
+                            quarterLabel = `Q4 (1st April ${item.year} - 30th June ${item.year})`;
+                            break;
+                    }
+                    return quarterLabel;
+                });
+                const counts = data.map(item => item.count);
+
+                // Create a new chart instance
+                feedbackChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Feedback Count',
+                            data: counts,
+                            backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                            borderColor: 'rgba(75, 192, 192, 1)',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            x: {
+                                beginAtZero: true,
+                                title: {
+                                    display: true,
+                                    text: 'Quarters'
+                                }
+                            },
+                            y: {
+                                beginAtZero: true,
+                                title: {
+                                    display: true,
+                                    text: 'Count'
+                                }
+                            }
+                        }
+                    }
+                });
+            })
+            .catch(error => {
+                console.error('Error fetching feedback:', error);
+            });
+    }
+
+    document.addEventListener('DOMContentLoaded', loadFeedbackChart);
 
     function loadDepartmentPieChart() {
         const startDate = '2024-01-01'; // Replace with your desired start date
@@ -419,45 +495,74 @@ fetch('/user-stats')
         document.getElementById('email').value = data.email;
     }
 
-    function fetchFeedback() {
-        const startDate = document.getElementById('startDate').value;
-        const endDate = document.getElementById('endDate').value;
+     function fetchFeedback() {
+            const startDateInput = document.getElementById('startDate');
+            const endDateInput = document.getElementById('endDate');
+            let startDate = startDateInput.value;
+            let endDate = endDateInput.value;
 
-        console.log(`Fetching feedback for dates: ${startDate} to ${endDate}`); // Debug logging
+            if (!startDate || !endDate) {
+                const today = new Date();
+                const month = today.getMonth();
+                let defaultStartDate, defaultEndDate;
 
-        fetch(`/feedback?start_date=${startDate}&end_date=${endDate}`)
-            .then(response => response.json())
-            .then(data => {
-                console.log('Feedback Data:', data); // Debug logging
-                const tableBody = document.querySelector('#feedbackTable tbody');
-                tableBody.innerHTML = '';
-                data.forEach(row => {
-                    const tr = document.createElement('tr');
-                    tr.innerHTML = `
-                        <td>${row.name}</td>
-                        <td>${row.age}</td>
-                        <td>${row.gender}</td>
-                        <td>${row.pwd}</td>
-                        <td>${row.organization}</td>
-                        <td>${row.departments}</td>
-                        <td>${row.service}</td>
-                        <td>${row.activity_or_product}</td>
-                        <td>${row.interacted_with}</td>
-                        <td>${row.person_attitude}</td>
-                        <td>${row.recommend}</td>
-                        <td>${row.comments}</td>
-                        <td>${row.phone}</td>
-                        <td>${row.email}</td>
-                        <td>${row.create_date}</td>
-                    `;
-                    tableBody.appendChild(tr);
-                });
+                if (month >= 0 && month < 3) {
+                    // January to March
+                    defaultStartDate = new Date(today.getFullYear(), 0, 1);  // January 1st
+                    defaultEndDate = new Date(today.getFullYear(), 3, 1);    // April 1st
+                } else if (month >= 3 && month < 6) {
+                    // April to June
+                    defaultStartDate = new Date(today.getFullYear(), 3, 1);  // April 1st
+                    defaultEndDate = new Date(today.getFullYear(), 6, 1);    // July 1st
+                } else if (month >= 6 && month < 9) {
+                    // July to September
+                    defaultStartDate = new Date(today.getFullYear(), 6, 1);  // July 1st
+                    defaultEndDate = new Date(today.getFullYear(), 9, 1);    // October 1st
+                } else {
+                    // October to December
+                    defaultStartDate = new Date(today.getFullYear(), 9, 1);  // October 1st
+                    defaultEndDate = new Date(today.getFullYear() + 1, 0, 1); // January 1st next year
+                }
 
-                // Update bar chart after table data is loaded
-                updateFeedbackChart(data);
-            })
-            .catch(error => console.error('Error fetching feedback:', error));
-    }
+                startDate = startDate || defaultStartDate.toISOString().split('T')[0];
+                endDate = endDate || defaultEndDate.toISOString().split('T')[0];
+            }
+
+            console.log(`Fetching feedback for dates: ${startDate} to ${endDate}`); // Debug logging
+
+            fetch(`/feedback?start_date=${startDate}&end_date=${endDate}`)
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Feedback Data:', data); // Debug logging
+                    const tableBody = document.querySelector('#feedbackTable tbody');
+                    tableBody.innerHTML = '';
+                    data.forEach(row => {
+                        const tr = document.createElement('tr');
+                        tr.innerHTML = `
+                            <td>${row.name}</td>
+                            <td>${row.age}</td>
+                            <td>${row.gender}</td>
+                            <td>${row.pwd}</td>
+                            <td>${row.organization}</td>
+                            <td>${row.departments}</td>
+                            <td>${row.service}</td>
+                            <td>${row.activity_or_product}</td>
+                            <td>${row.interacted_with}</td>
+                            <td>${row.person_attitude}</td>
+                            <td>${row.recommend}</td>
+                            <td>${row.comments}</td>
+                            <td>${row.phone}</td>
+                            <td>${row.email}</td>
+                            <td>${row.create_date}</td>
+                        `;
+                        tableBody.appendChild(tr);
+                    });
+
+                    // Update bar chart after table data is loaded
+                    updateFeedbackChart(data);
+                })
+                .catch(error => console.error('Error fetching feedback:', error));
+        }
 
     function updateFeedbackChart(feedbackData) {
         // Group feedback data by date

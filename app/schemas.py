@@ -46,5 +46,13 @@ class UserSchema(Schema):
 
 
 class UserStatsSchema(Schema):
-    month = fields.Str(required=True)
+    year = fields.Str(required=True)
     count = fields.Int(required=True)
+    quarter = fields.Str(required=True)
+
+
+class QuarterSchema(Schema):
+    id = fields.Int()
+    name = fields.Str()
+    start_date = fields.Date()
+    end_date = fields.Date()
