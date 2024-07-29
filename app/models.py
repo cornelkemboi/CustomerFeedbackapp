@@ -17,6 +17,7 @@ class RegisterUser(db.Model):
     role = db.Column(db.String(20), default='User', nullable=False)
     create_date = db.Column(db.DateTime, default=db.func.now())
     write_date = db.Column(db.DateTime, default=db.func.now(), onupdate=db.func.now())
+    active = db.Column(db.Boolean, default=True)
 
 
 class SurveyResponse(db.Model):

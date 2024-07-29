@@ -69,7 +69,7 @@ def delete_user():
 
     user = RegisterUser.query.get(user_id)
     if user:
-        db.session.delete(user)
+        user.active = False
         db.session.commit()
 
     return render_template('admin/dashboard.html')
@@ -107,7 +107,7 @@ def api_users():
         'email': user.email,
         'role': user.role,
         'create_date': user.create_date
-    } for user in users]
+    } for user in users if user.active]
 
     # Serialize the data
     schema = UserSchema(many=True)
