@@ -7,7 +7,6 @@
                 <th>Last Name</th>
                 <th>Email</th>
                 <th>Role</th>
-                <th>Date Registered</th>
                 <th>Action</th>
             </tr>
         </thead>
@@ -50,13 +49,13 @@
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="deleteUserModalLabel">Delete User</h5>
+                    <h5 class="modal-title" id="deleteUserModalLabel">Archive User</h5>
                     <button type="button" class="close" onclick="closeModal('deleteUserModal')" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
-                    <p>Are you sure you want to delete this user?</p>
+                    <p>Are you sure you want to archive this user?</p>
                     <form id="deleteUserForm" method="post" action="/delete-user">
                         <input type="hidden" id="deleteUserId" name="user_id">
                         <button type="submit" class="btn btn-danger">Archive</button>
@@ -90,8 +89,7 @@
                         <td>${user.first_name || 'N/A'}</td>
                         <td>${user.last_name || 'N/A'}</td>
                         <td>${user.email || 'N/A'}</td>
-                        <td>${user.role || 'N/A'}</td>
-                        <td>${user.create_date || 'N/A'}</td>
+                        <td>${user.role || 'N/A'}</td
                     `;
                     tableBody.appendChild(row);
                 });

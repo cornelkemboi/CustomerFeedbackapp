@@ -106,7 +106,6 @@ def api_users():
         'last_name': user.last_name,
         'email': user.email,
         'role': user.role,
-        'create_date': user.create_date
     } for user in users if user.active]
 
     # Serialize the data
