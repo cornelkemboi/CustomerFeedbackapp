@@ -131,7 +131,7 @@ def register():
             flash('Passwords do not match. Please try again.', 'danger')
             return render_template('admin/dashboard.html')
 
-        existing_user = RegisterUser.query.filter_by(email=email).first()
+        existing_user = RegisterUser.query.filter_by(email=email, active=True).first()
 
         if existing_user:
             flash('User with this email already exists. Please try another email.', 'danger')
