@@ -3,6 +3,7 @@ from datetime import datetime
 
 from flask import Blueprint, request, jsonify, flash, render_template
 from sqlalchemy import func
+from sqlalchemy.exc import NoResultFound
 
 from app import db
 from app.models import SurveyResponse, SurveyResponseDepartment, Department, RegisterUser, Quarter
@@ -24,8 +25,20 @@ def get_departments():
 @bp.route('/feedback', methods=['GET'])
 @login_required
 def feedback():
-    start_date = request.args.get('start_date')
-    end_date = request.args.get('end_date')
+    start_date = request.args.get('start_date', None)
+    end_date = request.args.get('end_date', None)
+
+    if not start_date and not end_date:
+        current_date = datetime.now().date()
+        try:
+            date_query = db.session.query(Quarter).filter(
+                Quarter.start_date <= current_date,
+                Quarter.end_date >= current_date
+            ).one()
+            start_date = date_query.start_date
+            end_date = date_query.end_date
+        except NoResultFound:
+            return {"error": "No quarter found for the current date"}, 404
 
     # Query SurveyResponses
     query = db.session.query(SurveyResponse)
