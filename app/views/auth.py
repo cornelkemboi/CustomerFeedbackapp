@@ -19,7 +19,7 @@ def login_required(f):
     return decorated_function
 
 
-@bp.route('/login', methods=['GET', 'POST'])
+@bp.route('/admin', methods=['GET', 'POST'])
 def user_login():
     if request.method == 'POST':
         email = request.form['email']
