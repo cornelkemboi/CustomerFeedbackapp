@@ -228,7 +228,7 @@
             </div>
             <!-- Bar Chart -->
             <div class="col-lg-6 col-md-12">
-                <div class="chart-container p-3">
+                <div class=" p-3">
                     <canvas id="feedbackChart"></canvas>
                 </div>
             </div>
@@ -289,77 +289,80 @@
 
     let feedbackChart;  // Global variable to store the chart instance
 
-    function loadFeedbackChart() {
-        fetch('/user-stats')
-            .then(response => response.json())
-            .then(data => {
-                const ctx = document.getElementById('feedbackChart').getContext('2d');
+function loadFeedbackChart() {
+    fetch('/user-stats')
+        .then(response => response.json())
+        .then(data => {
+            const ctx = document.getElementById('feedbackChart').getContext('2d');
 
-                // Destroy the existing chart instance if it exists
-                if (feedbackChart) {
-                    feedbackChart.destroy();
+            // Destroy the existing chart instance if it exists
+            if (feedbackChart) {
+                feedbackChart.destroy();
+            }
+
+            // Prepare the labels and data
+            const labels = data.map(item => {
+                let quarterLabel = '';
+                switch (item.quarter) {
+                    case 'Q1':
+                        quarterLabel = `Q1 July - Sept (${item.year})`;
+                        break;
+                    case 'Q2':
+                        quarterLabel = `Q2 Oct - Dec (${item.year})`;
+                        break;
+                    case 'Q3':
+                        quarterLabel = `Q3 Jan - March (${item.year})`;
+                        break;
+                    case 'Q4':
+                        quarterLabel = `Q4 April - Jun (${item.year})`;
+                        break;
+                    default:
+                        quarterLabel = `Unknown (${item.year})`;
                 }
+                return quarterLabel;
+            });
+            const counts = data.map(item => item.count);
 
-                // Prepare the labels and data
-                const labels = data.map(item => {
-                    let quarterLabel = '';
-                    switch (item.quarter) {
-                        case 'Q1':
-                            quarterLabel = `Q1 (1st July ${item.year} - 30th September ${item.year})`;
-                            break;
-                        case 'Q2':
-                            quarterLabel = `Q2 (1st October ${item.year} - 31st December ${item.year})`;
-                            break;
-                        case 'Q3':
-                            quarterLabel = `Q3 (1st January ${item.year} - 31st March ${item.year})`;
-                            break;
-                        case 'Q4':
-                            quarterLabel = `Q4 (1st April ${item.year} - 30th June ${item.year})`;
-                            break;
-                    }
-                    return quarterLabel;
-                });
-                const counts = data.map(item => item.count);
-
-                // Create a new chart instance
-                feedbackChart = new Chart(ctx, {
-                    type: 'bar',
-                    data: {
-                        labels: labels,
-                        datasets: [{
-                            label: 'Feedback Count',
-                            data: counts,
-                            backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                            borderColor: 'rgba(75, 192, 192, 1)',
-                            borderWidth: 1
-                        }]
-                    },
-                    options: {
-                        scales: {
-                            x: {
-                                beginAtZero: true,
-                                title: {
-                                    display: true,
-                                    text: 'Quarters'
-                                }
-                            },
-                            y: {
-                                beginAtZero: true,
-                                title: {
-                                    display: true,
-                                    text: 'Count'
-                                }
+            // Create a new chart instance
+            feedbackChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Feedback Count',
+                        data: counts,
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Quarters'
+                            }
+                        },
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Count'
                             }
                         }
                     }
-                });
-            })
-            .catch(error => {
-                console.error('Error fetching feedback:', error);
+                }
             });
-    }
+        })
+        .catch(error => {
+            console.error('Error fetching feedback:', error);
+        });
+}
 
-    document.addEventListener('DOMContentLoaded', loadFeedbackChart);
+document.addEventListener('DOMContentLoaded', loadFeedbackChart);
+
 
     function loadDepartmentPieChart() {
         const startDate = '2024-01-01'; // Replace with your desired start date
