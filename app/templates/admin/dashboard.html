@@ -142,6 +142,10 @@
     .horizontal-line {
        border-bottom: 2px solid black;
     }
+    #feedbackChart {
+        max-width: 100%;
+        height: auto;
+    }
 
     </style>
 </head>
@@ -204,36 +208,38 @@
     </div>
     {% endif %}
     {% endwith %}
-    <div class="container" style="background-color:#f7fcfa;">
+      <div class="container" style="background-color:#f7fcfa;">
         <div class="row">
             <!-- Filter Form -->
             <div class="col-lg-6 col-md-10 mb-3">
                 <div class="filter-form p-3">
                     <form id="filterForm">
                         <div class="form-row">
-                            <div class="col-md-4 mb-3">
+                            <div class="col-md-6 mb-3">
                                 <label for="startDate">Start Date</label>
                                 <input type="date" class="form-control" id="startDate" name="startDate">
                             </div>
-                            <div class="col-md-4 mb-3">
+                            <div class="col-md-6 mb-3">
                                 <label for="endDate">End Date</label>
                                 <input type="date" class="form-control" id="endDate" name="endDate">
                             </div>
-                            <div class="col-md-4 mb-3 d-flex align-items-end">
-                                <button type="button" class="btn btn-primary" onclick="fetchFeedback()">Filter</button>
-                            </div>
+                        </div>
+                        <div class="d-flex justify-content-center mt-3">
+                            <button type="button" class="btn btn-primary btn-lg" onclick="fetchFeedback()" style="width: 300px;">Filter</button>
                         </div>
                     </form>
                 </div>
             </div>
+
             <!-- Bar Chart -->
-            <div class="col-lg-6 col-md-12">
-                <div class=" p-3">
-                    <canvas id="feedbackChart"></canvas>
+            <div class="col-lg-6 col-md-10">
+                <div class="p-3">
+                    <canvas id="feedbackChart" style="max-width: 100%; height: auto;"></canvas>
                 </div>
             </div>
         </div>
     </div>
+
 
 
     <!-- Dashboard Layout -->
@@ -270,7 +276,7 @@
     <div class="container mb-4" style="background-color:#f7fcfa;">
         <div class="row mt-4" style="background-color:;">
             <div class="col-sm-10">
-                <h4>Most Visited Departments</h4>
+                <h5>Department Visits</h5>
                 <canvas id="departmentPieChart"></canvas>
             </div>
         </div>
@@ -371,6 +377,8 @@
                         }]
                     },
                     options: {
+                        responsive: true,
+                        maintainAspectRatio: false, // Ensures the chart adapts to container size
                         scales: {
                             x: {
                                 beginAtZero: true,
@@ -396,6 +404,7 @@
     }
 
     document.addEventListener('DOMContentLoaded', loadFeedbackChart);
+
 
     function loadDepartmentPieChart() {
         const startDate = '2024-01-01'; // Replace with your desired start date
