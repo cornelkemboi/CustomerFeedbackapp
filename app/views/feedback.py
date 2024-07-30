@@ -103,61 +103,63 @@ def department_pie_chart():
 
 
 @bp.route('/', methods=['GET', 'POST'])
-def main_page():
-    if request.method == 'POST':
-        name = request.form.get('name')
-        age = request.form.get('age')
-        gender = request.form.get('gender')
-        pwd = request.form.get('pwd')
-        organization = request.form.get('organization')
-        departments = request.form.getlist('departments[]')
-        service = request.form.get('service')
-        activity_or_product = request.form.get('activity_or_product')
-        interacted_with = request.form.get('interacted_with')
-        person_attitude = request.form.get('person_attitude')
-        recommend = request.form.get('recommend')
-        comments = request.form.get('comments')
-        phone = request.form.get('phone')
-        email = request.form.get('email')
-        create_date = datetime.utcnow()
+def customer_feedback():
+    try:
+        if request.method == 'POST':
+            name = request.form.get('name')
+            age = request.form.get('age')
+            gender = request.form.get('gender')
+            pwd = request.form.get('pwd')
+            organization = request.form.get('organization')
+            departments = request.form.getlist('departments[]')
+            service = request.form.get('service')
+            activity_or_product = request.form.get('activity_or_product')
+            interacted_with = request.form.get('interacted_with')
+            person_attitude = request.form.get('person_attitude')
+            recommend = request.form.get('recommend')
+            comments = request.form.get('comments')
+            phone = request.form.get('phone')
+            email = request.form.get('email')
+            create_date = datetime.utcnow()
 
-        # Insert data into the survey_responses table
-        new_response = SurveyResponse(
-            name=name,
-            age=age,
-            gender=gender,
-            pwd=pwd,
-            organization=organization,
-            service=service,
-            activity_or_product=activity_or_product,
-            interacted_with=interacted_with,
-            person_attitude=person_attitude,
-            recommend=recommend,
-            comments=comments,
-            phone=phone,
-            email=email,
-            create_date=create_date
-        )
-        db.session.add(new_response)
-        db.session.commit()
-
-        # Insert into the survey_response_departments table
-        for department_id in departments:
-            new_response_department = SurveyResponseDepartment(
-                survey_response_id=new_response.id,
-                department_id=department_id
+            # Insert data into the survey_responses table
+            new_response = SurveyResponse(
+                name=name,
+                age=age,
+                gender=gender,
+                pwd=pwd,
+                organization=organization,
+                service=service,
+                activity_or_product=activity_or_product,
+                interacted_with=interacted_with,
+                person_attitude=person_attitude,
+                recommend=recommend,
+                comments=comments,
+                phone=phone,
+                email=email,
+                create_date=create_date
             )
-            db.session.add(new_response_department)
+            db.session.add(new_response)
+            db.session.commit()
 
-        db.session.commit()
-        flash('Form submitted successfully!', 'success')
+            # Insert into the survey_response_departments table
+            for department_id in departments:
+                new_response_department = SurveyResponseDepartment(
+                    survey_response_id=new_response.id,
+                    department_id=department_id
+                )
+                db.session.add(new_response_department)
 
-        kippra_website = 'https://kippra.or.ke/'
-        feedback = (f"Thank you for your feedback! We appreciate your visit to our"
-                    f" organization and look forward to welcoming you again. For more information, please visit our"
-                    f" website <a href='{kippra_website}' target='_blank'>here</a>.")
-        return render_template('success.html', feedback=feedback)
+            db.session.commit()
+            flash('Form submitted successfully!', 'success')
 
+            kippra_website = 'https://kippra.or.ke/'
+            feedback = (f"Thank you for your feedback! We appreciate your visit to our"
+                        f" organization and look forward to welcoming you again. For more information, please visit our"
+                        f" website <a href='{kippra_website}' target='_blank'>here</a>.")
+            return render_template('success.html', feedback=feedback)
+    except Exception as e:
+        raise f"There was an error during customer_feedback put {str(e)}"
     return render_template('index.html')
 
 
@@ -179,30 +181,33 @@ def load_content(page):
 @bp.route('/user-stats', methods=['GET'])
 @login_required
 def user_stats_route():
-    # Define the subquery for quarters
-    quarters_subquery = db.session.query(
-        Quarter.name.label('quarter'),
-        Quarter.start_date,
-        Quarter.end_date
-    ).subquery()
+    try:
+        # Define the subquery for quarters
+        quarters_subquery = db.session.query(
+            Quarter.name.label('quarter'),
+            Quarter.start_date,
+            Quarter.end_date
+        ).subquery()
 
-    # Join with the quarters table
-    stats = db.session.query(
-        func.year(SurveyResponse.create_date).label('year'),
-        quarters_subquery.c.quarter,
-        func.count(SurveyResponse.id).label('count')
-    ).join(
-        quarters_subquery,
-        SurveyResponse.create_date.between(quarters_subquery.c.start_date, quarters_subquery.c.end_date)
-    ).group_by('year', 'quarter').all()
+        # Join with the quarters table
+        stats = db.session.query(
+            func.year(SurveyResponse.create_date).label('year'),
+            quarters_subquery.c.quarter,
+            func.count(SurveyResponse.id).label('count')
+        ).join(
+            quarters_subquery,
+            SurveyResponse.create_date.between(quarters_subquery.c.start_date, quarters_subquery.c.end_date)
+        ).group_by('year', 'quarter').all()
 
-    # Convert the result to a list of dictionaries
-    user_stats = [
-        {'year': stat.year, 'quarter': stat.quarter, 'count': stat.count}
-        for stat in stats
-    ]
+        # Convert the result to a list of dictionaries
+        user_stats = [
+            {'year': stat.year, 'quarter': stat.quarter, 'count': stat.count}
+            for stat in stats
+        ]
 
-    # Serialize the data using Marshmallow
-    user_stats_schema = UserStatsSchema(many=True)
-    user_stats_json = user_stats_schema.dump(user_stats)
+        # Serialize the data using Marshmallow
+        user_stats_schema = UserStatsSchema(many=True)
+        user_stats_json = user_stats_schema.dump(user_stats)
+    except Exception as e:
+        raise f"There was an error during user_stats_route fetch {str(e)}"
     return jsonify(user_stats_json)
