@@ -29,7 +29,6 @@ class SurveyResponse(db.Model):
     pwd = db.Column(db.String(6), nullable=False)
     organization = db.Column(db.String(255), nullable=False)
     service = db.Column(db.String(255), nullable=False)
-    activity_or_product = db.Column(db.String(255), nullable=False)
     interacted_with = db.Column(db.String(255))
     person_attitude = db.Column(db.Integer)
     recommend = db.Column(db.Integer, nullable=False)

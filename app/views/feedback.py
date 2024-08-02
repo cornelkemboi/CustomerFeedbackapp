@@ -120,7 +120,6 @@ def customer_feedback():
             organization = request.form.get('organization')
             departments = request.form.getlist('departments[]')
             service = request.form.get('service')
-            activity_or_product = request.form.get('activity_or_product')
             interacted_with = request.form.get('interacted_with')
             person_attitude = request.form.get('person_attitude')
             recommend = request.form.get('recommend')
@@ -137,7 +136,6 @@ def customer_feedback():
                 pwd=pwd,
                 organization=organization,
                 service=service,
-                activity_or_product=activity_or_product,
                 interacted_with=interacted_with,
                 person_attitude=person_attitude,
                 recommend=recommend,
