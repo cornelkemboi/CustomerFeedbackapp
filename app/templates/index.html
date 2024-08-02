@@ -38,22 +38,20 @@
         <div class="col-1" style="background-color:#dee0df;"></div>
         <div class="col-10" style="background-color:#f2f5f3;">
             <h5 class="text-center font-weight-bold" style="color: #52ad7b;">Quick Online Customer Satisfaction Survey</h5>
-            <form id="feedback-form" action="/" method="post">
+           <form method="POST" action="/customer/feedback">
                 <p class="lead" style="color: #52ad7b;">Our dear customer, we value your feedback. Please take time to fill our
                     short
                     questionnaire below:</p>
                 <p class="font-weight-bold"><span class="text-danger">Required*</span></p>
 
                 <div class="form-group">
-                    <label for="name" class="font-weight-bold" style="color: #52ad7b;">1. Name<span
-                            class="text-danger">*</span></label>
-                    <input type="text" class="form-control" id="name" name="name" placeholder="Input your names here"
-                           required>
+                    <label class="font-weight-bold" style="color: #52ad7b;">1. Name</label>
+                    <input type="text" class="form-control" id="name" name="name" placeholder="Input your names here">
                 </div>
 
                 <div class="form-group">
                     <label class="font-weight-bold" style="color: #52ad7b;">2. Age<span class="text-danger">*</span></label><br>
-                    <div class="form-check form-check-inline">
+                    <div class="form-check form-check-inline" style="margin-left: 30px;">
                         <input class="form-check-input" type="radio" id="less-than-35" name="age" value="less-than-35"
                                required>
                         <label class="form-check-label" for="less-than-35">< 35</label>
@@ -68,11 +66,11 @@
 
                 <div class="form-group">
                     <label class="font-weight-bold" style="color: #52ad7b;">3. Gender<span class="text-danger">*</span></label><br>
-                    <div class="form-check">
-                        <input class="form-check-input" type="radio" id="Female" name="gender" value="female" required>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" id="Female" name="gender" value="female" required style="margin-left: 30px;">
                         <label class="form-check-label" for="Female">Female</label>
                     </div>
-                    <div class="form-check">
+                    <div class="form-check form-check-inline">
                         <input class="form-check-input" type="radio" id="Male" name="gender" value="male" required>
                         <label class="form-check-label" for="Male">Male</label>
                     </div>
@@ -80,61 +78,50 @@
 
                 <div class="form-group">
                     <label class="font-weight-bold" style="color: #52ad7b;">4. PWD<span class="text-danger">*</span></label><br>
-                    <div class="form-check">
-                        <input class="form-check-input" type="radio" id="Yes" name="pwd" value="Yes" required>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" id="Yes" name="pwd" value="Yes" required style="margin-left: 30px;">
                         <label class="form-check-label" for="Yes">Yes</label>
                     </div>
-                    <div class="form-check">
+                    <div class="form-check form-check-inline">
                         <input class="form-check-input" type="radio" id="No" name="pwd" value="No" required>
                         <label class="form-check-label" for="No">No</label>
                     </div>
                 </div>
 
                 <div class="form-group">
-                    <label for="organization" class="font-weight-bold" style="color: #52ad7b;">5. Organization<span
-                            class="text-danger">*</span></label>
+                    <label for="organization" class="font-weight-bold" style="color: #52ad7b;">5. Organization</label>
                     <input type="text" class="form-control" id="organization" name="organization"
-                           placeholder="Input your Organization" required>
+                           placeholder="Input your Organization">
                 </div>
 
                 <div class="form-group">
                     <label class="font-weight-bold" style="color: #52ad7b;">6. Which department(s) did you interact with?<span
                             class="text-danger">*</span></label><br>
-                    <div id="department-options">
+                    <div id="department-options" style="margin-left: 30px;">
                         <!-- Options will be populated dynamically -->
                         <div class="error-message" id="error-message">Please select at least one department.</div>
                     </div>
                 </div>
 
                 <div class="form-group">
-                    <label for="service" class="font-weight-bold" style="color: #52ad7b;">7. What type of service did you
-                        seek?<span
+                    <label for="service" class="font-weight-bold" style="color: #52ad7b;">7. What type of service, product or activity did you access/participate in?<span
                                 class="text-danger">*</span></label>
                     <input type="text" class="form-control" id="service" name="service" required>
                 </div>
-
                 <div class="form-group">
-                    <label for="activity_or_product" class="font-weight-bold" style="color: #52ad7b;">8. If you accessed a product
-                        or
-                        participated in an activity, indicate the name<span class="text-danger">*</span></label>
-                    <input type="text" class="form-control" id="activity_or_product" name="activity_or_product"
-                           required>
-                </div>
-
-                <div class="form-group">
-                    <label for="interacted_with" class="font-weight-bold" style="color: #52ad7b;">9. Whom did you interact
+                    <label for="interacted_with" class="font-weight-bold" style="color: #52ad7b;">8. Whom did you interact
                         with?</label>
                     <input type="text" class="form-control" id="interacted_with" name="interacted_with">
                 </div>
 
                 <div class="form-group">
-                    <label class="font-weight-bold" style="color: #52ad7b;">10. The person you interacted with was knowledgeable,
+                    <label class="font-weight-bold" style="color: #52ad7b;">9. The person you interacted with was knowledgeable,
                         portrayed
                         a good attitude and served you effectively:</label><br>
-                    <div class="font-italic" style="color: #52ad7b;">(1 star=Poor, 2 stars=Fair, 3 Stars=Neutral, 4 Stars = Good
+                    <div class="font-italic" style="color: #52ad7b; margin-left: 30px;">(1 star=Poor, 2 stars=Fair, 3 Stars=Neutral, 4 Stars = Good
                         and 5
                         Stars=Excellent)<br></div>
-                    <div class="form-check form-check-inline">
+                    <div class="form-check form-check-inline" style="margin-left: 30px;">
                         <input class="form-check-input" type="radio" id="attitude_1" name="person_attitude" value="1">
                         <label class="form-check-label" for="attitude_1">1</label>
                     </div>
@@ -157,13 +144,13 @@
                 </div>
 
                 <div class="form-group">
-                    <label class="font-weight-bold" style="color: #52ad7b;">11. I would recommend KIPPRA to my organization,
+                    <label class="font-weight-bold" style="color: #52ad7b;">10. I would recommend KIPPRA to my organization,
                         partners,
                         friends, and stakeholders<span class="text-danger">*</span></label><br>
-                    <div class="font-italic" style="color: #52ad7b;"> (1 star=Poor, 2 stars=Fair, 3 Stars=Neutral, 4 Stars = Good
+                    <div class="font-italic" style="color: #52ad7b; margin-left: 30px;"> (1 star=Poor, 2 stars=Fair, 3 Stars=Neutral, 4 Stars = Good
                         and 5
                         Stars=Excellent)<br></div>
-                    <div class="form-check form-check-inline">
+                    <div class="form-check form-check-inline" style="margin-left: 30px;">
                         <input class="form-check-input" type="radio" id="recommend_1" name="recommend" value="1"
                                required>
                         <label class="form-check-label" for="recommend_1">1</label>
@@ -192,7 +179,7 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="comments" class="font-weight-bold" style="color: #52ad7b;">12. Any additional comments or
+                    <label for="comments" class="font-weight-bold" style="color: #52ad7b;">11. Any additional comments or
                         suggestions
                         on
                         how to improve KIPPRA products and services:</label>
@@ -201,7 +188,7 @@
 
                 <div class="form-group">
                     <label class="font-weight-bold" style="color: #52ad7b;">
-                        13. If you want us to reach you for our marketing products and activities, please enter your
+                        12. If you want us to reach you for our marketing products and activities, please enter your
                         contact
                         details:
                     </label>
@@ -220,7 +207,7 @@
                 </div>
 
                 <div class="col-md-12 text-center">
-                    <button type="submit" class="btnbtn-lg btn-block" style="margin-bottom: 25px; background-color:#499c6f; color: white; bold">Submit
+                    <button type="submit" class="btn btn-lg btn-block" style="margin-bottom: 25px; background-color:#499c6f; color: white; bold">Submit
                     </button>
                 </div>
             </form>

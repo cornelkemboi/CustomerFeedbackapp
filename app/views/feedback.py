@@ -102,9 +102,16 @@ def department_pie_chart():
     return jsonify(department_data)
 
 
-@bp.route('/', methods=['GET', 'POST'])
+@bp.route('/')
+def index_page():
+    return render_template('index.html')
+
+
+@bp.route('/customer/feedback', methods=['GET', 'POST'])
 def customer_feedback():
     try:
+        print(request.form)
+
         if request.method == 'POST':
             name = request.form.get('name')
             age = request.form.get('age')
