@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from . import db
 
 
@@ -54,3 +56,11 @@ class Quarter(db.Model):
 
     def __repr__(self):
         return f'<Quarter {self.name}>'
+
+
+class ReceiptionRecords(db.Model):
+    __tablename__ = 'reception_records'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(80), nullable=False)
+    phone = db.Column(db.String(20), nullable=False)
+    date_visited = db.Column(db.String(20), default=datetime.now().strftime('%Y-%m-%d %H:%M:%S'))

@@ -1,4 +1,3 @@
-import hashlib
 from datetime import datetime
 
 from flask import Blueprint, request, jsonify, flash, render_template
@@ -6,9 +5,9 @@ from sqlalchemy import func
 from sqlalchemy.exc import NoResultFound
 
 from app import db
-from app.models import SurveyResponse, SurveyResponseDepartment, Department, RegisterUser, Quarter
-from app.schemas import DepartmentSchema, SurveyResponseSchema, DepartmentPieChartSchema, RegisterUserSchema, \
-    UserStatsSchema
+from app.models import (SurveyResponse, SurveyResponseDepartment, Department, Quarter,
+                        ReceiptionRecords)
+from app.schemas import DepartmentSchema, SurveyResponseSchema, DepartmentPieChartSchema, UserStatsSchema
 from app.views.auth import login_required
 
 bp = Blueprint('feedback', __name__)
@@ -105,6 +104,41 @@ def department_pie_chart():
 @bp.route('/')
 def index_page():
     return render_template('index.html')
+
+
+@bp.route('/customer-register')
+def customer_page():
+    return render_template('customer_register.html')
+
+
+@bp.route('/add_visitors_record', methods=['POST'])
+def add_visitors_record():
+    data = request.get_json()
+    new_record = ReceiptionRecords(name=data['name'], phone=data['phone'])
+    db.session.add(new_record)
+    db.session.commit()
+    return jsonify({'success': True})
+
+
+@bp.route('/get_visitors_records', methods=['GET'])
+def get_visitors_records():
+    records = ReceiptionRecords.query.all()
+    return jsonify([{
+        'name': record.name,
+        'phone': record.phone,
+        'date_visited': record.date_visited
+    } for record in records])
+
+
+@bp.route('/send_message', methods=['POST'])
+def send_message():
+    data = request.get_json()
+    phone = data.get('phone')
+    if phone:
+        # Handle the phone number (e.g., send it to another service, log it, etc.)
+        print(f"Phone number received: {phone}")
+        return jsonify({'success': True})
+    return jsonify({'success': False}), 400
 
 
 @bp.route('/customer/feedback', methods=['GET', 'POST'])
