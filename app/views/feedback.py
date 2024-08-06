@@ -1,4 +1,5 @@
 import json
+import os
 from datetime import datetime
 
 import requests
@@ -134,7 +135,7 @@ def get_visitors_records():
 
     for record in records:
         if record.msg_id:
-            auth_token = "99eb4c2ff2744af5985b6f73f1967664"
+            auth_token = os.getenv('SMS_TOKEN')
             base_url = f"https://apis.sematime.com/v1/1536927996500/messages/{record.msg_id}/delivery.url"
             params = {
                 'AuthToken': auth_token,
@@ -160,7 +161,7 @@ def send_message():
     try:
         data = request.get_json()
         recipients = data.get('phone')
-        auth_token = "99eb4c2ff2744af5985b6f73f1967664"
+        auth_token = os.getenv('SMS_TOKEN')
         if recipients:
             text_message = ("Thank you for visiting KIPPRA. Feel free to rate our services by clicking the following "
                             "url http://192.168.40.27/")
