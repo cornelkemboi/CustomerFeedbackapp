@@ -106,7 +106,7 @@ def index_page():
     return render_template('index.html')
 
 
-@bp.route('/customer-register')
+@bp.route('/reception')
 def customer_page():
     return render_template('customer_register.html')
 
@@ -122,7 +122,8 @@ def add_visitors_record():
 
 @bp.route('/get_visitors_records', methods=['GET'])
 def get_visitors_records():
-    records = ReceiptionRecords.query.all()
+    today = datetime.today().date()
+    records = ReceiptionRecords.query.filter(func.date(ReceiptionRecords.date_visited) == today).all()
     return jsonify([{
         'name': record.name,
         'phone': record.phone,
