@@ -1,5 +1,7 @@
+import json
 from datetime import datetime
 
+import requests
 from flask import Blueprint, request, jsonify, flash, render_template
 from sqlalchemy import func
 from sqlalchemy.exc import NoResultFound
@@ -130,15 +132,27 @@ def get_visitors_records():
         func.date(ReceiptionRecords.date_visited) == today
     ).all()
 
-    # Create the response data
-    records_list = [{
+    for record in records:
+        if record.msg_id:
+            auth_token = "99eb4c2ff2744af5985b6f73f1967664"
+            base_url = f"https://apis.sematime.com/v1/1536927996500/messages/{record.msg_id}/delivery.url"
+            params = {
+                'AuthToken': auth_token,
+                'content-type':  'application/json'
+            }
+            response = requests.get(base_url, params=params)
+            if response:
+                data = json.loads(response.text)
+                status = [item['status'] for item in data['summary'] if item['count'] == 1]
+                record.status = status
+            db.session.commit()
+
+    return jsonify([{
         'name': record.name,
         'phone': record.phone,
         'date_visited': record.date_visited,
-        'messageSent': int(record.status) if record.status is not None else 0
-    } for record in records]
-
-    return jsonify(records_list)
+        'status': record.status or 'Pending'
+    } for record in records])
 
 
 @bp.route('/send_message', methods=['POST'])
@@ -152,14 +166,23 @@ def send_message():
                             "url http://192.168.40.27/")
             if not text_message or not recipients or not auth_token:
                 return jsonify({'success': False}), 400
-            success = send_text_message(text_message, recipients, auth_token)
-            if success:
-                record = ReceiptionRecords.query.filter_by(phone=recipients).first()
-                if record:
-                    record.status = True
-                    db.session.commit()
+            response = send_text_message(text_message, recipients, auth_token)
+            if response:
+                try:
+                    record = ReceiptionRecords.query.filter_by(phone=recipients).first()
+                    if record:
+                        record.msg_id = response['id']
+                        record.status = 'Pending'
+                        db.session.commit()
+                        return jsonify({'success': True})
+                    else:
+                        return jsonify({'success': False, 'error': 'Record not found'})
+
+                except Exception as e:
+                    db.session.rollback()
+                    return jsonify({'success': False, 'error': str(e)})
             else:
-                return jsonify({'success': False}), 400
+                return jsonify({'success': False, 'error': 'Invalid response'})
     except Exception as e:
         db.session.rollback()
         return jsonify({'success': False, 'error': str(e)})
