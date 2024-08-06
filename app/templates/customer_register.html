@@ -132,8 +132,8 @@
         .catch(error => console.error('Error:', error));
     });
 
-    function displayRecords() {
-        fetch('get_visitors_records')
+   function displayRecords() {
+    fetch('get_visitors_records')
         .then(response => response.json())
         .then(records => {
             const recordsBody = document.getElementById('recordsBody');
@@ -207,23 +207,11 @@
         });
     }
 
-    function updateTime() {
-        const now = new Date();
-        const date = now.toLocaleDateString();
-        const time = now.toLocaleTimeString();
-
-        document.getElementById('currentDate').textContent = date;
-        document.getElementById('currentTime').textContent = time;
-    }
-
-    // Update time every second
-    setInterval(updateTime, 1000);
-
-    // Display records on page load
     window.onload = function() {
         displayRecords();
         updateTime();
     };
+
 </script>
 
 </body>

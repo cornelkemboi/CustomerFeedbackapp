@@ -128,25 +128,33 @@ def get_visitors_records():
     return jsonify([{
         'name': record.name,
         'phone': record.phone,
-        'date_visited': record.date_visited
+        'date_visited': record.date_visited,
+        'messageSent': record.status
     } for record in records])
 
 
 @bp.route('/send_message', methods=['POST'])
 def send_message():
-    data = request.get_json()
-    recipients = data.get('phone')
-    auth_token = "99eb4c2ff2744af5985b6f73f1967664"
-    if recipients:
-        text_message = ("Thank you for visiting KIPPRA. Feel free to rate our services by clicking the following url "
-                "http://192.168.40.27/")
-        if not text_message or not recipients or not auth_token:
-            return jsonify({'success': False}), 400
-        success = send_text_message(text_message, recipients, auth_token)
-        if success:
-            return jsonify({'success': True})
-        else:
-            return jsonify({'success': False}), 400
+    try:
+        data = request.get_json()
+        recipients = data.get('phone')
+        auth_token = "99eb4c2ff2744af5985b6f73f1967664"
+        if recipients:
+            text_message = ("Thank you for visiting KIPPRA. Feel free to rate our services by clicking the following "
+                            "url http://192.168.40.27/")
+            if not text_message or not recipients or not auth_token:
+                return jsonify({'success': False}), 400
+            success = send_text_message(text_message, recipients, auth_token)
+            if success:
+                record = ReceiptionRecords.query.filter_by(phone=recipients).first()
+                if record:
+                    record.message_sent = True
+                    db.session.commit()
+            else:
+                return jsonify({'success': False}), 400
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'success': False, 'error': str(e)})
 
 
 @bp.route('/customer/feedback', methods=['GET', 'POST'])
