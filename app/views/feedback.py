@@ -124,13 +124,21 @@ def add_visitors_record():
 @bp.route('/get_visitors_records', methods=['GET'])
 def get_visitors_records():
     today = datetime.today().date()
-    records = ReceiptionRecords.query.filter(func.date(ReceiptionRecords.date_visited) == today).all()
-    return jsonify([{
+
+    # Filter records for today
+    records = ReceiptionRecords.query.filter(
+        func.date(ReceiptionRecords.date_visited) == today
+    ).all()
+
+    # Create the response data
+    records_list = [{
         'name': record.name,
         'phone': record.phone,
         'date_visited': record.date_visited,
-        'messageSent': record.status
-    } for record in records])
+        'messageSent': int(record.status) if record.status is not None else 0
+    } for record in records]
+
+    return jsonify(records_list)
 
 
 @bp.route('/send_message', methods=['POST'])
