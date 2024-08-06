@@ -148,7 +148,7 @@ def send_message():
             if success:
                 record = ReceiptionRecords.query.filter_by(phone=recipients).first()
                 if record:
-                    record.message_sent = True
+                    record.status = True
                     db.session.commit()
             else:
                 return jsonify({'success': False}), 400
