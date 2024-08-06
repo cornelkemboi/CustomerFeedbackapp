@@ -5,6 +5,7 @@ from sqlalchemy import func
 from sqlalchemy.exc import NoResultFound
 
 from app import db
+from app.config import send_text_message
 from app.models import (SurveyResponse, SurveyResponseDepartment, Department, Quarter,
                         ReceiptionRecords)
 from app.schemas import DepartmentSchema, SurveyResponseSchema, DepartmentPieChartSchema, UserStatsSchema
@@ -134,12 +135,18 @@ def get_visitors_records():
 @bp.route('/send_message', methods=['POST'])
 def send_message():
     data = request.get_json()
-    phone = data.get('phone')
-    if phone:
-        # Handle the phone number (e.g., send it to another service, log it, etc.)
-        print(f"Phone number received: {phone}")
-        return jsonify({'success': True})
-    return jsonify({'success': False}), 400
+    recipients = data.get('phone')
+    auth_token = "99eb4c2ff2744af5985b6f73f1967664"
+    if recipients:
+        text_message = ("Thank you for visiting KIPPRA. Feel free to rate our services by clicking the following url "
+                "http://192.168.40.27/")
+        if not text_message or not recipients or not auth_token:
+            return jsonify({'success': False}), 400
+        success = send_text_message(text_message, recipients, auth_token)
+        if success:
+            return jsonify({'success': True})
+        else:
+            return jsonify({'success': False}), 400
 
 
 @bp.route('/customer/feedback', methods=['GET', 'POST'])
