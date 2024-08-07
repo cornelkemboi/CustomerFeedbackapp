@@ -128,7 +128,7 @@
         .catch(error => console.error('Error:', error));
     });
 
-   function displayRecords() {
+  function displayRecords() {
     fetch('get_visitors_records')
         .then(response => response.json())
         .then(records => {
@@ -152,22 +152,30 @@
 
                 const actionCell = document.createElement('td');
                 const actionButton = document.createElement('button');
+                actionButton.textContent = 'Send Message'; // Default status
+                actionButton.classList.add('btn', 'btn-primary'); // Default style
 
-                // Default button text and class
-                actionButton.textContent = 'Send Message';
-                actionButton.classList.add('btn', 'btn-primary');
-
-                // Update button based on the status
-                if (record.status === 'Delivered') {
-                    actionButton.textContent = 'Done';
-                    actionButton.classList.remove('btn-primary');
-                    actionButton.classList.add('btn-success');
-                    actionButton.disabled = true;
-                } else if (record.status === 'Pending' || record.status === 'Undeliverable' || record.status === 'Expired' || record.status === 'Rejected') {
-                    actionButton.textContent = record.status;
-                    actionButton.classList.remove('btn-primary');
-                    actionButton.classList.add('btn-danger');
-                    actionButton.disabled = false; // Enable the button for retry if needed
+                // Update button text and style based on status
+                if (record.status) {
+                    switch(record.status) {
+                        case 'Delivered':
+                            actionButton.textContent = 'Done';
+                            actionButton.classList.remove('btn-primary');
+                            actionButton.classList.add('btn-success');
+                            actionButton.disabled = true; // Disable button if message was delivered
+                            break;
+                        case 'Pending':
+                        case 'Undeliverable':
+                        case 'Expired':
+                        case 'Rejected':
+                            actionButton.textContent = record.status;
+                            actionButton.classList.remove('btn-primary');
+                            actionButton.classList.add('btn-danger');
+                            button.disabled = true;
+                            break;
+                        default:
+                            break;
+                    }
                 }
 
                 actionButton.onclick = function() {
@@ -193,9 +201,9 @@
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                button.textContent = 'Done';
+                button.textContent = 'Pending';
                 button.classList.remove('btn-primary');
-                button.classList.add('btn-success');
+                button.classList.add('btn-danger');
                 button.disabled = true; // Disable the button after successful send
                 alert('Message sent successfully.');
             } else {

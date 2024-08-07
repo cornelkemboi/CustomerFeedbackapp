@@ -64,5 +64,5 @@ class ReceiptionRecords(db.Model):
     name = db.Column(db.String(80), nullable=False)
     phone = db.Column(db.String(20), nullable=False)
     date_visited = db.Column(db.String(20), default=datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
-    status = db.Column(db.String(80))
+    status = db.Column(db.String(80), default='Send Message')
     msg_id = db.Column(db.String(80))
