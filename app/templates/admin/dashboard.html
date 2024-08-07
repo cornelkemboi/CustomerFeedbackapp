@@ -547,6 +547,18 @@
         document.getElementById('last_name').value = data.last_name;
         document.getElementById('email').value = data.email;
     }
+    document.addEventListener('DOMContentLoaded', (event) => {
+        // Get current date
+        let currentDate = new Date();
+
+        // Get first and last date of the current month
+        let firstDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+        let lastDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
+
+        // Set the values of the input fields
+        document.getElementById('startDate').valueAsDate = firstDate;
+        document.getElementById('endDate').valueAsDate = lastDate;
+    });
 
     function fetchFeedback() {
     const startDateInput = document.getElementById('startDate');

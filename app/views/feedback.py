@@ -4,7 +4,7 @@ from datetime import datetime
 
 import requests
 from flask import Blueprint, request, jsonify, flash, render_template
-from sqlalchemy import func
+from sqlalchemy import func, and_
 from sqlalchemy.exc import NoResultFound
 
 from app import db
@@ -118,10 +118,28 @@ def customer_page():
 @bp.route('/add_visitors_record', methods=['POST'])
 def add_visitors_record():
     data = request.get_json()
-    new_record = ReceiptionRecords(name=data['name'], phone=data['phone'])
-    db.session.add(new_record)
-    db.session.commit()
-    return jsonify({'success': True})
+    today = datetime.today().date()
+    try:
+        check_if_rec_exist = db.session.query(ReceiptionRecords).filter(
+            and_(
+                ReceiptionRecords.phone == data['phone'],
+                func.date(ReceiptionRecords.date_visited) == today
+            )
+        ).first()
+
+        if check_if_rec_exist:
+            return jsonify({'success': False})
+        else:
+            new_record = ReceiptionRecords(
+                phone=data['phone'],
+                name=data['name']
+            )
+            db.session.add(new_record)
+            db.session.commit()
+            return jsonify({'success': True})
+    except Exception as e:
+        print("An error occurred:", e)
+        db.session.rollback()
 
 
 @bp.route('/get_visitors_records', methods=['GET'])
