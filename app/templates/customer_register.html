@@ -153,15 +153,21 @@
                 const actionCell = document.createElement('td');
                 const actionButton = document.createElement('button');
 
-                // Determine button text and style based on status
+                // Default button text and class
+                actionButton.textContent = 'Send Message';
+                actionButton.classList.add('btn', 'btn-primary');
+
+                // Update button based on the status
                 if (record.status === 'Delivered') {
                     actionButton.textContent = 'Done';
-                    actionButton.classList.add('btn', 'btn-success');
+                    actionButton.classList.remove('btn-primary');
+                    actionButton.classList.add('btn-success');
                     actionButton.disabled = true;
-                } else {
+                } else if (record.status === 'Pending' || record.status === 'Undeliverable' || record.status === 'Expired' || record.status === 'Rejected') {
                     actionButton.textContent = record.status;
-                    actionButton.classList.add('btn', 'btn-danger');
-                    actionButton.disabled = false;
+                    actionButton.classList.remove('btn-primary');
+                    actionButton.classList.add('btn-danger');
+                    actionButton.disabled = false; // Enable the button for retry if needed
                 }
 
                 actionButton.onclick = function() {
@@ -176,46 +182,42 @@
         .catch(error => console.error('Error:', error));
     }
 
-
     function sendMessage(phone, button) {
-    fetch('/send_message', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ phone: phone })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            button.textContent = 'Done';
+        fetch('/send_message', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ phone: phone })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                button.textContent = 'Done';
+                button.classList.remove('btn-primary');
+                button.classList.add('btn-success');
+                button.disabled = true; // Disable the button after successful send
+                alert('Message sent successfully.');
+            } else {
+                button.textContent = 'Pending';
+                button.classList.remove('btn-primary');
+                button.classList.add('btn-danger');
+                alert('Failed to send message. Please try again.');
+            }
+        })
+        .catch(error => {
+            button.textContent = 'Retry';
             button.classList.remove('btn-primary');
-            button.classList.add('btn-success');
-            button.disabled = true; // Disable the button after successful send
-            alert('Message sent successfully.');
-        } else {
-            button.textContent = 'Pending';
-            button.classList.remove('btn-primary');
-            button.classList.add('btn-danger');
-            // Optional: Keep the button enabled for retry
-            // button.disabled = false;
-            alert('Failed to send message. Please try again.');
-        }
-    })
-    .catch(error => {
-        button.textContent = 'Retry';
-        button.classList.remove('btn-primary');
-        button.classList.add('btn-warning');
-        // Optional: Keep the button enabled for retry
-        // button.disabled = false;
-        console.error('Error:', error);
-    });
+            button.classList.add('btn-warning');
+            console.error('Error:', error);
+        });
     }
 
     window.onload = function() {
         displayRecords();
         updateTime();
     };
+
 
 
 </script>

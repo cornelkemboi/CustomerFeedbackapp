@@ -137,14 +137,14 @@ def get_visitors_records():
         if record.msg_id:
             auth_token = os.getenv('SMS_TOKEN')
             base_url = f"https://apis.sematime.com/v1/1536927996500/messages/{record.msg_id}/delivery.url"
-            params = {
-                'AuthToken': auth_token,
-                'content-type':  'application/json'
+            headers = {
+                'Authorization': f'Bearer {auth_token}',
+                'Content-Type': 'application/json'
             }
-            response = requests.get(base_url, params=params)
-            if response:
-                data = json.loads(response.text)
-                status = [item['status'] for item in data['summary'] if item['count'] == 1]
+            response = requests.get(base_url, headers=headers)
+            if response.status_code == 200:
+                data = response.json()
+                status = next((item['status'] for item in data['summary'] if item['count'] == 1), 'Pending')
                 record.status = status
             db.session.commit()
 
