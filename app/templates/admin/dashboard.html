@@ -11,6 +11,155 @@
     <!-- Chart.js for graphs -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
      <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+    <style>
+        body {
+    padding-top: 56px;
+}
+
+.sidebar {
+    height: 100vh; /* Full-height */
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 100;
+    background-color: #f8f9fa;
+    padding-top: 20px;
+}
+
+.sidebar {
+    background-color: #30b570;
+    height: 100vh;
+    width: 200px;
+    position: fixed;
+}
+
+.sidebar .nav-link.active {
+    background-color: #28a745;
+}
+
+.content {
+    margin-left: 200px;
+    padding: 20px;
+}
+
+.card {
+    margin-bottom: 20px;
+}
+
+.header-logo img {
+    max-height: 50px;
+}
+
+.filter-form {
+    margin-bottom: 20px;
+}
+
+.chart-container {
+    position: relative;
+    height: 400px;
+}
+
+/* Container for the table */
+.table-container {
+    max-height: 250px; /* Set the desired height for the scrollable area */
+    overflow-y: auto; /* Enable vertical scrolling */
+    overflow-x: auto; /* Allow horizontal scrolling if needed */
+    border: 1px solid #ddd; /* Optional: adds border around the table */
+    margin-top: 50px;
+}
+
+/* Table styling */
+table {
+    width: 100%;
+    border-collapse: collapse; /* Ensures borders collapse into one */
+}
+
+/* Fixed header styling */
+thead {
+    display: table;
+    width: 100%;
+    table-layout: fixed; /* Ensures columns are properly aligned */
+}
+
+thead th {
+    position: -webkit-sticky; /* For Safari */
+    position: sticky; /* For modern browsers */
+    top: 0; /* Stick to the top */
+    z-index: 1; /* Ensure header is above body content */
+    background-color: #f4f4f4; /* Match background with header */
+    border-bottom: 2px solid #ddd; /* Border to separate header from body */
+    font-size: 12px; /* Reduce font size for the header cells */
+}
+
+/* Styling for the table cells */
+th, td {
+    padding: 8px; /* Reduce padding to fit smaller text */
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+    font-size: 12px; /* Reduce font size for table cells */
+    overflow: hidden; /* Hide overflowing content */
+    white-space: nowrap; /* Prevent text from wrapping to the next line */
+}
+
+/* Ensures the table body scrolls while header remains fixed */
+tbody {
+    display: block;
+    overflow-y: auto; /* Vertical scroll */
+    overflow-x: auto; /* Horizontal scroll */
+    height: 250px; /* Match the max-height of the container */
+}
+
+/* Ensure rows are displayed correctly and align with headers */
+tbody tr {
+    display: table;
+    width: 100%;
+    table-layout: fixed; /* Ensures column width is consistent */
+}
+
+table td, table th {
+    box-sizing: border-box; /* Includes padding and border in the element's total width and height */
+}
+
+form {
+    padding: 10px;
+}
+
+.custom-modal .modal-dialog {
+    max-width: 400px;
+}
+
+.modal-right .modal-dialog {
+    position: fixed;
+    top: 50%;
+    right: 0;
+    transform: translateY(-50%);
+    margin: 0;
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.horizontal-line {
+    border-bottom: 2px solid black;
+}
+
+#feedbackChart {
+    max-width: 100%;
+    height: auto;
+}
+
+    </style>
 </head>
 <body style="background-color:#eef7f2;">
 <!-- Navbar -->
