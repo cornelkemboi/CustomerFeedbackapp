@@ -157,7 +157,8 @@ def get_visitors_records():
     for record in records:
         if record.msg_id:
             auth_token = os.getenv('SMS_TOKEN')
-            base_url = f"https://apis.sematime.com/v1/1536927996500/messages/{record.msg_id}/delivery.url"
+            base_url =(f"https://apis.sematime.com/v1/1536927996500/messages/{record.msg_id}/delivery.url?"
+                       f"AuthToken={auth_token}")
             headers = {
                 'Authorization': f'Bearer {auth_token}',
                 'Content-Type': 'application/json'
