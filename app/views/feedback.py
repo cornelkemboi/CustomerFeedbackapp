@@ -193,7 +193,8 @@ def send_message():
             response = send_text_message(text_message, recipients, auth_token)
             if response:
                 try:
-                    record = ReceiptionRecords.query.filter_by(phone=recipients).first()
+                    record = ReceiptionRecords.query.filter_by(phone=recipients).order_by(
+                        ReceiptionRecords.date_visited.desc()).first()
                     if record:
                         record.msg_id = response['id']
                         record.status = 'Pending'
