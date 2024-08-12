@@ -8,6 +8,11 @@
     </title>
     <!-- Bootstrap CSS -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+<!--     <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">-->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Chart.js for graphs -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         html, body {
             height: 100%;
@@ -41,8 +46,21 @@
 </head>
 <body>
 {% include 'header.html' %}
-<div class="row" style="min-height: 100vh; display: flex;">
-    <div class="col-1" style="background-color:#dee0df;"></div>
+<div class="sidebar" style="min-height: 100vh; display: flex;">
+     <div class="sidebar" style="background-color: #74be95;">
+    <ul class="nav flex-column">
+        <li class="nav-item">
+            <a class="nav-link active text-white" href="/dashboard" onclick="showContent('dashboard')"><i
+                    class="fas fa-home"></i> Dashboard</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link text-white" href="/reception"><i class="fas fa-users"></i> Add Visitors</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link text-white" href="/logout"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+        </li>
+    </ul>
+</div>
     <div class="container content mt-4" style="flex: 1 0 auto; overflow-y: auto;">
         <h3 class="mt-4">Add New Record</h3>
         <form id="recordForm" class="form-inline">

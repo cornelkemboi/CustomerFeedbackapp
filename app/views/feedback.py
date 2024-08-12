@@ -111,11 +111,13 @@ def index_page():
 
 
 @bp.route('/reception')
+@login_required
 def customer_page():
     return render_template('customer_register.html')
 
 
 @bp.route('/add_visitors_record', methods=['POST'])
+@login_required
 def add_visitors_record():
     data = request.get_json()
     today = datetime.today().date()
@@ -143,6 +145,7 @@ def add_visitors_record():
 
 
 @bp.route('/get_visitors_records', methods=['GET'])
+@login_required
 def get_visitors_records():
     today = datetime.today().date()
 
@@ -175,6 +178,7 @@ def get_visitors_records():
 
 
 @bp.route('/send_message', methods=['POST'])
+@login_required
 def send_message():
     try:
         data = request.get_json()
@@ -182,7 +186,7 @@ def send_message():
         auth_token = os.getenv('SMS_TOKEN')
         if recipients:
             text_message = ("Thank you for visiting KIPPRA. Feel free to rate our services by clicking the following "
-                            "url http://192.168.40.27/")
+                            "address https://feedback.kippra.or.ke/")
             if not text_message or not recipients or not auth_token:
                 return jsonify({'success': False}), 400
             response = send_text_message(text_message, recipients, auth_token)
@@ -208,6 +212,7 @@ def send_message():
 
 
 @bp.route('/customer/feedback', methods=['GET', 'POST'])
+@login_required
 def customer_feedback():
     try:
         print(request.form)
