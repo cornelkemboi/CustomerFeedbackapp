@@ -116,6 +116,11 @@ def customer_page():
     return render_template('customer_register.html')
 
 
+@bp.route('/forgot_password')
+def forgot_password():
+    return render_template('admin/forgot_password.html')
+
+
 @bp.route('/add_visitors_record', methods=['POST'])
 @login_required
 def add_visitors_record():
@@ -157,8 +162,8 @@ def get_visitors_records():
     for record in records:
         if record.msg_id:
             auth_token = os.getenv('SMS_TOKEN')
-            base_url =(f"https://apis.sematime.com/v1/1536927996500/messages/{record.msg_id}/delivery.url?"
-                       f"AuthToken={auth_token}")
+            base_url = (f"https://apis.sematime.com/v1/1536927996500/messages/{record.msg_id}/delivery.url?"
+                        f"AuthToken={auth_token}")
             headers = {
                 'Authorization': f'Bearer {auth_token}',
                 'Content-Type': 'application/json'
