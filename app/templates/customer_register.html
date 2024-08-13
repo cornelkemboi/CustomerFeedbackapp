@@ -3,13 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>
-        KIPPRA – The Kenya Institute for Public Policy Research and Analysis
-    </title>
+    <title>KIPPRA – The Kenya Institute for Public Policy Research and Analysis</title>
     <!-- Bootstrap CSS -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-<!--     <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">-->
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <!-- Chart.js for graphs -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -42,39 +39,60 @@
             background-color: #f8f9fa;
             padding: 1px 0;
         }
+        .spinner-container {
+            display: none;
+            position: fixed;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            z-index: 1050; /* Ensure it appears above other content */
+        }
     </style>
 </head>
 <body>
 {% include 'header.html' %}
 <div class="sidebar" style="min-height: 100vh; display: flex;">
-     <div class="sidebar" style="background-color: #74be95;">
-    <ul class="nav flex-column">
-        <li class="nav-item">
-            <a class="nav-link active text-white" href="/dashboard" onclick="showContent('dashboard')"><i
-                    class="fas fa-home"></i> Dashboard</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link text-white" href="/reception"><i class="fas fa-users"></i> Add Visitors</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link text-white" href="/logout"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
-        </li>
-    </ul>
-</div>
+    <div class="sidebar" style="background-color: #74be95;">
+        <ul class="nav flex-column">
+            <li class="nav-item">
+                <a class="nav-link active text-white" href="/dashboard" onclick="showContent('dashboard')"><i class="fas fa-home"></i> Dashboard</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-white" href="/reception"><i class="fas fa-users"></i> Add Visitors</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-white" href="/logout"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+            </li>
+        </ul>
+    </div>
     <div class="container content mt-4" style="flex: 1 0 auto; overflow-y: auto;">
-        <h3 class="mt-4">Add New Record</h3>
-        <form id="recordForm" class="form-inline">
-            <div class="form-group mb-2">
-                <label for="name" class="sr-only">Name:</label>
-                <input type="text" class="form-control" id="name" name="name" placeholder="Name" required>
+        <div class="row">
+            <div class="col-12">
+                <h3 class="mt-4">Add New Record</h3>
+                <form id="recordForm" class="form-inline">
+                    <div class="form-group mb-2">
+                        <label for="name" class="sr-only">Name:</label>
+                        <input type="text" class="form-control" id="name" name="name" placeholder="Name" required>
+                    </div>
+                    <div class="form-group mx-sm-3 mb-2">
+                        <label for="phone" class="sr-only">Phone:</label>
+                        <input type="tel" class="form-control" id="phone" name="phone" placeholder="Phone" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary mb-2">Add Record</button>
+                </form>
+                 <form id="refreshForm" class="form-inline mt-2">
+                    <button type="button" id="refreshRecordsBtn" class="btn">
+                        <i class="fa fa-refresh" aria-hidden="true"></i> Refresh</button>
+                </form>
             </div>
-            <div class="form-group mx-sm-3 mb-2">
-                <label for="phone" class="sr-only">Phone:</label>
-                <input type="tel" class="form-control" id="phone" name="phone" placeholder="Phone" required>
+            <div class="spinner-container" id="spinner">
+                <div class="spinner-border" role="status">
+                    <span class="sr-only">Refreshing...</span>
+                </div>
+                <p>Refreshing...</p>
             </div>
-            <button type="submit" class="btn btn-primary mb-2">Add Record</button>
-        </form>
-
+        </div>
         <div class="table-responsive" style="max-height: 70vh; overflow-y: auto;">
             <table class="table table-bordered table-striped mt-3" id="recordsTable">
                 <thead class="thead-light">
@@ -96,13 +114,10 @@
 <footer class="text-center" style="flex-shrink: 0;">
     {% include 'footer.html' %}
 </footer>
-
-
 <!-- Bootstrap JS and dependencies -->
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-
 <script>
     function validatePhoneNumber() {
         const phoneInput = document.getElementById("phone").value;
@@ -146,68 +161,76 @@
         .catch(error => console.error('Error:', error));
     });
 
-  function displayRecords() {
-    fetch('get_visitors_records')
-        .then(response => response.json())
-        .then(records => {
-            const recordsBody = document.getElementById('recordsBody');
-            recordsBody.innerHTML = '';
+    function displayRecords() {
+        fetch('/get_visitors_records')
+            .then(response => response.json())
+            .then(records => {
+                const recordsBody = document.getElementById('recordsBody');
+                recordsBody.innerHTML = '';
 
-            records.forEach(record => {
-                const row = document.createElement('tr');
+                records.forEach(record => {
+                    const row = document.createElement('tr');
 
-                const nameCell = document.createElement('td');
-                nameCell.textContent = record.name;
-                row.appendChild(nameCell);
+                    const nameCell = document.createElement('td');
+                    nameCell.textContent = record.name;
+                    row.appendChild(nameCell);
 
-                const phoneCell = document.createElement('td');
-                phoneCell.textContent = record.phone;
-                row.appendChild(phoneCell);
+                    const phoneCell = document.createElement('td');
+                    phoneCell.textContent = record.phone;
+                    row.appendChild(phoneCell);
 
-                const dateCell = document.createElement('td');
-                dateCell.textContent = record.date_visited;
-                row.appendChild(dateCell);
+                    const dateCell = document.createElement('td');
+                    dateCell.textContent = record.date_visited;
+                    row.appendChild(dateCell);
 
-                const actionCell = document.createElement('td');
-                const actionButton = document.createElement('button');
-                actionButton.textContent = 'Send Message'; // Default status
-                actionButton.classList.add('btn', 'btn-primary'); // Default style
+                    const actionCell = document.createElement('td');
+                    const actionButton = document.createElement('button');
+                    actionButton.textContent = 'Send Message'; // Default status
+                    actionButton.classList.add('btn', 'btn-primary'); // Default style
 
-                // Update button text and style based on status
-                if (record.status) {
-                    switch(record.status) {
-                        case 'Delivered':
-                            actionButton.textContent = 'Done';
-                            actionButton.classList.remove('btn-primary');
-                            actionButton.classList.add('btn-success');
-                            actionButton.disabled = true; // Disable button if message was delivered
-                            break;
-                        case 'Pending':
-                        case 'Undeliverable':
-                        case 'Expired':
-                        case 'Rejected':
-                            actionButton.textContent = record.status;
-                            actionButton.classList.remove('btn-primary');
-                            actionButton.classList.add('btn-danger');
-                            break;
-                        default:
-                            break;
+                    // Update button text and style based on status
+                    if (record.status) {
+                        switch(record.status) {
+                            case 'Delivered':
+                                actionButton.textContent = 'Done';
+                                actionButton.classList.remove('btn-primary');
+                                actionButton.classList.add('btn-success');
+                                actionButton.disabled = true; // Disable button if message was delivered
+                                break;
+                            case 'Pending':
+                            case 'Undeliverable':
+                            case 'Expired':
+                            case 'Rejected':
+                                actionButton.textContent = record.status;
+                                actionButton.classList.remove('btn-primary');
+                                actionButton.classList.add('btn-danger');
+                                break;
+                            default:
+                                break;
+                        }
                     }
-                }
 
-                actionButton.onclick = function() {
-                    sendMessage(record.phone, actionButton);
-                };
-                actionCell.appendChild(actionButton);
-                row.appendChild(actionCell);
+                    actionButton.onclick = function() {
+                        sendMessage(record.phone, actionButton);
+                    };
+                    actionCell.appendChild(actionButton);
+                    row.appendChild(actionCell);
 
-                recordsBody.appendChild(row);
+                    recordsBody.appendChild(row);
+                });
+            })
+            .catch(error => console.error('Error:', error))
+            .finally(() => {
+                document.getElementById('spinner').style.display = 'none'; // Hide spinner after records are loaded
             });
-        })
-        .catch(error => console.error('Error:', error));
     }
 
     function sendMessage(phone, button) {
+        button.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Sending...';
+        button.classList.remove('btn-primary');
+        button.classList.add('btn-secondary');
+        button.disabled = true;
+
         fetch('/send_message', {
             method: 'POST',
             headers: {
@@ -218,34 +241,34 @@
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                button.textContent = 'Pending';
-                button.classList.remove('btn-primary');
+                button.innerHTML = 'Pending'; // Remove spinner
+                button.classList.remove('btn-secondary');
                 button.classList.add('btn-danger');
                 button.disabled = true; // Disable the button after successful send
                 alert('Message sent successfully.');
             } else {
-                button.textContent = 'Pending';
-                button.classList.remove('btn-primary');
+                button.innerHTML = 'Failed'; // Remove spinner
+                button.classList.remove('btn-secondary');
                 button.classList.add('btn-danger');
                 alert('Failed to send message. Please try again.');
             }
         })
         .catch(error => {
-            button.textContent = 'Retry';
-            button.classList.remove('btn-primary');
+            button.innerHTML = 'Retry'; // Remove spinner
+            button.classList.remove('btn-secondary');
             button.classList.add('btn-warning');
             console.error('Error:', error);
         });
     }
 
+    document.getElementById('refreshRecordsBtn').addEventListener('click', function() {
+        document.getElementById('spinner').style.display = 'block'; // Show spinner
+        displayRecords();
+    });
+
     window.onload = function() {
         displayRecords();
-        updateTime();
     };
-
-
-
 </script>
-
 </body>
 </html>
