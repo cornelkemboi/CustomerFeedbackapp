@@ -1,4 +1,4 @@
-import json
+import pytz
 import os
 from datetime import datetime
 
@@ -10,7 +10,7 @@ from sqlalchemy.exc import NoResultFound
 from app import db
 from app.config import send_text_message
 from app.models import (SurveyResponse, SurveyResponseDepartment, Department, Quarter,
-                        ReceiptionRecords)
+                        ReceiptionRecords, get_eat_now)
 from app.schemas import DepartmentSchema, SurveyResponseSchema, DepartmentPieChartSchema, UserStatsSchema
 from app.views.auth import login_required
 
@@ -32,7 +32,7 @@ def feedback():
     end_date = request.args.get('end_date', None)
 
     if not start_date and not end_date:
-        current_date = datetime.now().date()
+        current_date = get_eat_now()
         try:
             date_query = db.session.query(Quarter).filter(
                 Quarter.start_date <= current_date,
@@ -125,7 +125,7 @@ def forgot_password():
 @login_required
 def add_visitors_record():
     data = request.get_json()
-    today = datetime.today().date()
+    today = get_eat_now()
     try:
         check_if_rec_exist = db.session.query(ReceiptionRecords).filter(
             and_(
@@ -238,7 +238,7 @@ def customer_feedback():
             comments = request.form.get('comments')
             phone = request.form.get('phone')
             email = request.form.get('email')
-            create_date = datetime.utcnow()
+            create_date = get_eat_now()
 
             # Insert data into the survey_responses table
             new_response = SurveyResponse(

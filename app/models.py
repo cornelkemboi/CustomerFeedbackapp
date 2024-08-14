@@ -1,6 +1,14 @@
 from datetime import datetime
-
+import pytz
 from . import db
+
+# Define the East African Time timezone
+EAT = pytz.timezone('Africa/Nairobi')
+
+
+def get_eat_now():
+    """Return the current time in East African Time."""
+    return datetime.now(EAT).strftime("%Y-%m-%d %I:%M:%S")
 
 
 class Department(db.Model):
@@ -17,8 +25,8 @@ class RegisterUser(db.Model):
     email = db.Column(db.String(50), unique=True, nullable=False)
     password = db.Column(db.String(255), nullable=False)
     role = db.Column(db.String(20), default='User', nullable=False)
-    create_date = db.Column(db.DateTime, default=db.func.now())
-    write_date = db.Column(db.DateTime, default=db.func.now(), onupdate=db.func.now())
+    create_date = db.Column(db.DateTime, default=get_eat_now)
+    write_date = db.Column(db.DateTime, default=get_eat_now, onupdate=get_eat_now)
     active = db.Column(db.Boolean, default=True)
 
 
@@ -37,7 +45,7 @@ class SurveyResponse(db.Model):
     comments = db.Column(db.Text)
     phone = db.Column(db.String(255))
     email = db.Column(db.String(50))
-    create_date = db.Column(db.DateTime, default=db.func.now())
+    create_date = db.Column(db.DateTime, default=get_eat_now)
 
 
 class SurveyResponseDepartment(db.Model):
@@ -63,6 +71,6 @@ class ReceiptionRecords(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80), nullable=False)
     phone = db.Column(db.String(20), nullable=False)
-    date_visited = db.Column(db.String(20), default=datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+    date_visited = db.Column(db.DateTime, default=get_eat_now)  # Changed to DateTime
     status = db.Column(db.String(80), default='Send Message')
     msg_id = db.Column(db.String(80))

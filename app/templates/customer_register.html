@@ -46,78 +46,94 @@
             top: 50%;
             transform: translate(-50%, -50%);
             text-align: center;
-            z-index: 1050; /* Ensure it appears above other content */
+            z-index: 1050;
         }
     </style>
 </head>
 <body>
 {% include 'header.html' %}
-<div class="sidebar" style="min-height: 100vh; display: flex;">
-    <div class="sidebar" style="background-color: #74be95;">
-        <ul class="nav flex-column">
-            <li class="nav-item">
-                <a class="nav-link active text-white" href="/dashboard" onclick="showContent('dashboard')"><i class="fas fa-home"></i> Dashboard</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link text-white" href="/reception"><i class="fas fa-users"></i> Add Visitors</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link text-white" href="/logout"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
-            </li>
-        </ul>
-    </div>
-    <div class="container content mt-4" style="flex: 1 0 auto; overflow-y: auto;">
-        <div class="row">
-            <div class="col-12">
-                <h3 class="mt-4">Add New Record</h3>
-                <form id="recordForm" class="form-inline">
-                    <div class="form-group mb-2">
-                        <label for="name" class="sr-only">Name:</label>
-                        <input type="text" class="form-control" id="name" name="name" placeholder="Name" required>
+
+<div class="container-fluid">
+    <div class="row" style="min-height: 100vh;">
+        <!-- Sidebar -->
+        <nav class="col-12 col-md-3 col-lg-2 text-white sidebar py-3" style="background-color: #74be95;">
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link active text-white" href="/dashboard" onclick="showContent('dashboard')">
+                        <i class="fas fa-home"></i> Dashboard
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white" href="/reception">
+                        <i class="fas fa-users"></i> Add Visitors
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white" href="/logout">
+                        <i class="fa-solid fa-right-from-bracket"></i> Logout
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="col-12 col-md-9 col-lg-10 content mt-4">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-12">
+                        <h3 class="mt-4">Add New Record</h3>
+                        <form id="recordForm" class="form-inline">
+                            <div class="form-group mb-2">
+                                <label for="name" class="sr-only">Name:</label>
+                                <input type="text" class="form-control" id="name" name="name" placeholder="Name" required>
+                            </div>
+                            <div class="form-group mx-sm-3 mb-2">
+                                <label for="phone" class="sr-only">Phone:</label>
+                                <input type="tel" class="form-control" id="phone" name="phone" placeholder="Phone" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary mb-2">Add Record</button>
+                        </form>
+                        <form id="refreshForm" class="form-inline mt-2">
+                            <button type="button" id="refreshRecordsBtn" class="btn">
+                                <i class="fa fa-refresh" aria-hidden="true"></i> Refresh</button>
+                        </form>
                     </div>
-                    <div class="form-group mx-sm-3 mb-2">
-                        <label for="phone" class="sr-only">Phone:</label>
-                        <input type="tel" class="form-control" id="phone" name="phone" placeholder="Phone" required>
+                    <div class="spinner-container" id="spinner">
+                        <div class="spinner-border" role="status">
+                            <span class="sr-only">Refreshing...</span>
+                        </div>
+                        <p>Refreshing...</p>
                     </div>
-                    <button type="submit" class="btn btn-primary mb-2">Add Record</button>
-                </form>
-                 <form id="refreshForm" class="form-inline mt-2">
-                    <button type="button" id="refreshRecordsBtn" class="btn">
-                        <i class="fa fa-refresh" aria-hidden="true"></i> Refresh</button>
-                </form>
-            </div>
-            <div class="spinner-container" id="spinner">
-                <div class="spinner-border" role="status">
-                    <span class="sr-only">Refreshing...</span>
                 </div>
-                <p>Refreshing...</p>
+                <div class="table-responsive mt-4">
+                    <table class="table table-bordered table-striped" id="recordsTable">
+                        <thead class="thead-light">
+                        <tr>
+                            <th>Name</th>
+                            <th>Phone</th>
+                            <th>Date/Time Visited</th>
+                            <th>Action</th>
+                        </tr>
+                        </thead>
+                        <tbody id="recordsBody">
+                        <!-- Existing records will be displayed here -->
+                        </tbody>
+                    </table>
+                </div>
             </div>
-        </div>
-        <div class="table-responsive" style="max-height: 70vh; overflow-y: auto;">
-            <table class="table table-bordered table-striped mt-3" id="recordsTable">
-                <thead class="thead-light">
-                <tr>
-                    <th>Name</th>
-                    <th>Phone</th>
-                    <th>Date/Time Visited</th>
-                    <th>Action</th>
-                </tr>
-                </thead>
-                <tbody id="recordsBody">
-                <!-- Existing records will be displayed here -->
-                </tbody>
-            </table>
-        </div>
+        </main>
     </div>
-    <div class="col-1" style="background-color:#dee0df;"></div>
 </div>
+
 <footer class="text-center" style="flex-shrink: 0;">
     {% include 'footer.html' %}
 </footer>
+
 <!-- Bootstrap JS and dependencies -->
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
 <script>
     function validatePhoneNumber() {
         const phoneInput = document.getElementById("phone").value;
@@ -195,7 +211,7 @@
                                 actionButton.textContent = 'Done';
                                 actionButton.classList.remove('btn-primary');
                                 actionButton.classList.add('btn-success');
-                                actionButton.disabled = true; // Disable button if message was delivered
+                                actionButton.disabled = true;
                                 break;
                             case 'Pending':
                             case 'Undeliverable':
@@ -241,20 +257,20 @@
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                button.innerHTML = 'Pending'; // Remove spinner
+                button.innerHTML = 'Pending';
                 button.classList.remove('btn-secondary');
                 button.classList.add('btn-danger');
-                button.disabled = true; // Disable the button after successful send
+                button.disabled = true;
                 alert('Message sent successfully.');
             } else {
-                button.innerHTML = 'Failed'; // Remove spinner
+                button.innerHTML = 'Failed';
                 button.classList.remove('btn-secondary');
                 button.classList.add('btn-danger');
                 alert('Failed to send message. Please try again.');
             }
         })
         .catch(error => {
-            button.innerHTML = 'Retry'; // Remove spinner
+            button.innerHTML = 'Retry';
             button.classList.remove('btn-secondary');
             button.classList.add('btn-warning');
             console.error('Error:', error);
@@ -262,7 +278,7 @@
     }
 
     document.getElementById('refreshRecordsBtn').addEventListener('click', function() {
-        document.getElementById('spinner').style.display = 'block'; // Show spinner
+        document.getElementById('spinner').style.display = 'block';
         displayRecords();
     });
 
