@@ -3,161 +3,160 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-     <title>
+    <title>
         KIPPRA – The Kenya Institute for Public Policy Research and Analysis
     </title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <!-- Chart.js for graphs -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-     <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+
     <style>
-        body {
-    padding-top: 56px;
-}
+        html, body {
+          height: 100%;
+      }
 
-.sidebar {
-    height: 100vh; /* Full-height */
-    position: fixed;
-    top: 0;
-    left: 0;
-    z-index: 100;
-    background-color: #f8f9fa;
-    padding-top: 20px;
-}
+      .content {
+          flex: 1;
+      }
+      #currentDate, #currentTime {
+          font-weight: bold;
+      }
+      header {
+          padding: 1px 0;
+      }
+      .header-logo img {
+          max-height: 50px;
+      }
+      .header-title {
+          margin-left: 20px;
+          font-size: 18px;
+          font-weight: bold;
+      }
+      footer {
+          background-color: #f8f9fa;
+          padding: 1px 0;
+      }
+      body {
+          padding-top: 56px;
+        }
 
-.sidebar {
-    background-color: #30b570;
-    height: 100vh;
-    width: 200px;
-    position: fixed;
-}
+        .card {
+          margin-bottom: 20px;
+        }
 
-.sidebar .nav-link.active {
-    background-color: #28a745;
-}
+        .header-logo img {
+          max-height: 50px;
+        }
 
-.content {
-    margin-left: 200px;
-    padding: 20px;
-}
+        .filter-form {
+          margin-bottom: 20px;
+        }
 
-.card {
-    margin-bottom: 20px;
-}
+        .chart-container {
+          position: relative;
+          height: 400px;
+        }
 
-.header-logo img {
-    max-height: 50px;
-}
+        /* Container for the table */
+        .table-container {
+          max-height: 250px; /* Set the desired height for the scrollable area */
+          overflow-y: auto; /* Enable vertical scrolling */
+          overflow-x: auto; /* Allow horizontal scrolling if needed */
+          border: 1px solid #ddd; /* Optional: adds border around the table */
+          margin-top: 50px;
+        }
 
-.filter-form {
-    margin-bottom: 20px;
-}
+        /* Table styling */
+        table {
+          width: 100%;
+          border-collapse: collapse; /* Ensures borders collapse into one */
+        }
 
-.chart-container {
-    position: relative;
-    height: 400px;
-}
+        /* Fixed header styling */
+        thead {
+          display: table;
+          width: 100%;
+          table-layout: fixed; /* Ensures columns are properly aligned */
+        }
 
-/* Container for the table */
-.table-container {
-    max-height: 250px; /* Set the desired height for the scrollable area */
-    overflow-y: auto; /* Enable vertical scrolling */
-    overflow-x: auto; /* Allow horizontal scrolling if needed */
-    border: 1px solid #ddd; /* Optional: adds border around the table */
-    margin-top: 50px;
-}
+        thead th {
+          position: -webkit-sticky; /* For Safari */
+          position: sticky; /* For modern browsers */
+          top: 0; /* Stick to the top */
+          z-index: 1; /* Ensure header is above body content */
+          background-color: #f4f4f4; /* Match background with header */
+          border-bottom: 2px solid #ddd; /* Border to separate header from body */
+          font-size: 12px; /* Reduce font size for the header cells */
+        }
 
-/* Table styling */
-table {
-    width: 100%;
-    border-collapse: collapse; /* Ensures borders collapse into one */
-}
+        /* Styling for the table cells */
+        th, td {
+          padding: 8px; /* Reduce padding to fit smaller text */
+          text-align: left;
+          border-bottom: 1px solid #ddd;
+          font-size: 12px; /* Reduce font size for table cells */
+          overflow: hidden; /* Hide overflowing content */
+          white-space: nowrap; /* Prevent text from wrapping to the next line */
+        }
 
-/* Fixed header styling */
-thead {
-    display: table;
-    width: 100%;
-    table-layout: fixed; /* Ensures columns are properly aligned */
-}
+        /* Ensures the table body scrolls while header remains fixed */
+        tbody {
+          display: block;
+          overflow-y: auto; /* Vertical scroll */
+          overflow-x: auto; /* Horizontal scroll */
+          height: 250px; /* Match the max-height of the container */
+        }
 
-thead th {
-    position: -webkit-sticky; /* For Safari */
-    position: sticky; /* For modern browsers */
-    top: 0; /* Stick to the top */
-    z-index: 1; /* Ensure header is above body content */
-    background-color: #f4f4f4; /* Match background with header */
-    border-bottom: 2px solid #ddd; /* Border to separate header from body */
-    font-size: 12px; /* Reduce font size for the header cells */
-}
+        /* Ensure rows are displayed correctly and align with headers */
+        tbody tr {
+          display: table;
+          width: 100%;
+          table-layout: fixed; /* Ensures column width is consistent */
+        }
 
-/* Styling for the table cells */
-th, td {
-    padding: 8px; /* Reduce padding to fit smaller text */
-    text-align: left;
-    border-bottom: 1px solid #ddd;
-    font-size: 12px; /* Reduce font size for table cells */
-    overflow: hidden; /* Hide overflowing content */
-    white-space: nowrap; /* Prevent text from wrapping to the next line */
-}
+        table td, table th {
+          box-sizing: border-box; /* Includes padding and border in the element's total width and height */
+        }
 
-/* Ensures the table body scrolls while header remains fixed */
-tbody {
-    display: block;
-    overflow-y: auto; /* Vertical scroll */
-    overflow-x: auto; /* Horizontal scroll */
-    height: 250px; /* Match the max-height of the container */
-}
+        form {
+          padding: 10px;
+        }
 
-/* Ensure rows are displayed correctly and align with headers */
-tbody tr {
-    display: table;
-    width: 100%;
-    table-layout: fixed; /* Ensures column width is consistent */
-}
+        .custom-modal .modal-dialog {
+          max-width: 400px;
+        }
 
-table td, table th {
-    box-sizing: border-box; /* Includes padding and border in the element's total width and height */
-}
+        .modal-right .modal-dialog {
+          position: fixed;
+          top: 50%;
+          right: 0;
+          transform: translateY(-50%);
+          margin: 0;
+        }
 
-form {
-    padding: 10px;
-}
+        .close {
+          color: #aaa;
+          float: right;
+          font-size: 28px;
+          font-weight: bold;
+        }
 
-.custom-modal .modal-dialog {
-    max-width: 400px;
-}
+        .close:hover,
+        .close:focus {
+          color: black;
+          text-decoration: none;
+          cursor: pointer;
+        }
 
-.modal-right .modal-dialog {
-    position: fixed;
-    top: 50%;
-    right: 0;
-    transform: translateY(-50%);
-    margin: 0;
-}
+        .horizontal-line {
+          border-bottom: 2px solid black;
+        }
 
-.close {
-    color: #aaa;
-    float: right;
-    font-size: 28px;
-    font-weight: bold;
-}
-
-.close:hover,
-.close:focus {
-    color: black;
-    text-decoration: none;
-    cursor: pointer;
-}
-
-.horizontal-line {
-    border-bottom: 2px solid black;
-}
-
-#feedbackChart {
-    max-width: 100%;
-    height: auto;
-}
+        #feedbackChart {
+          max-width: 100%;
+          height: auto;
+        }
 
     </style>
 </head>
@@ -184,119 +183,128 @@ form {
     </div>
 </nav>
 
-<!-- Sidebar -->
-<div class="sidebar" style="background-color: #74be95;">
-    <ul class="nav flex-column">
-        <li class="nav-item">
-            <a class="nav-link active text-white" href="/dashboard" onclick="showContent('dashboard')"><i
-                    class="fas fa-home"></i> Dashboard</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link text-white" href="/dashboard"><i class="fas fa-comments"></i> Feedback</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link text-white" href="/reception"><i class="fas fa-users"></i> Add Visitors</a>
-        </li>
-        {% if user_role == 'admin' %}
-        <li class="nav-item">
-            <a class="nav-link text-white" href="#" onclick="showContent('users')"><i class="fas fa-users"></i>
-                Users</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link text-white" href="#" onclick="showContent('user_register')"><i
-                    class="fas fa-user-plus"></i> Register User</a>
-        </li>
-        {% endif %}
-        <li class="nav-item">
-            <a class="nav-link text-white" href="/logout"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
-        </li>
-    </ul>
-</div>
-
 <!-- Main Content -->
-<div class="content" id="content-area">
-    <h4>Dashboard Overview</h4>
-    {% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-    <div class="alert alert-{{ messages[0][0] }}">
-        {{ messages[0][1] }}
-    </div>
-    {% endif %}
-    {% endwith %}
-      <div class="container" style="background-color:#f7fcfa;">
-        <div class="row">
-            <!-- Filter Form -->
-            <div class="col-lg-6 col-md-10 mb-3">
-                <div class="filter-form p-3">
-                    <form id="filterForm">
-                        <div class="form-row">
-                            <div class="col-md-6 mb-3">
-                                <label for="startDate">Start Date</label>
-                                <input type="date" class="form-control" id="startDate" name="startDate">
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="endDate">End Date</label>
-                                <input type="date" class="form-control" id="endDate" name="endDate">
+<div class="container-fluid">
+    <div class="row" style="min-height: 100vh;">
+        <button class="btn btn-success d-md-none" type="button" data-toggle="collapse" data-target="#sidebar"
+                aria-expanded="false" aria-controls="sidebar">
+            <i class="fas fa-bars"></i>
+        </button>
+        <nav id="sidebar" class="collapse d-md-block col-md-3 col-lg-2 text-white sidebar py-3" style="background-color: #74be95;">
+            <!-- Sidebar -->
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link active text-white" href="/dashboard" onclick="showContent('dashboard')"><i
+                            class="fas fa-home"></i> Dashboard</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white" href="/dashboard"><i class="fas fa-comments"></i> Feedback</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white" href="/reception"><i class="fas fa-users"></i> Add Visitors</a>
+                </li>
+                {% if user_role == 'admin' %}
+                <li class="nav-item">
+                    <a class="nav-link text-white" href="#" onclick="showContent('users')"><i class="fas fa-users"></i>
+                        Users</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white" href="#" onclick="showContent('user_register')"><i
+                            class="fas fa-user-plus"></i> Register User</a>
+                </li>
+                {% endif %}
+                <li class="nav-item">
+                    <a class="nav-link text-white" href="/logout"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+                </li>
+            </ul>
+        </nav>
+        <main class="col-12 col-md-9 col-lg-10 content mt-4" id="content-area">
+            <div class="container-fluid">
+                <h4>Dashboard Overview</h4>
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                <div class="alert alert-{{ messages[0][0] }}">
+                    {{ messages[0][1] }}
+                </div>
+                {% endif %}
+                {% endwith %}
+                <div class="container" style="background-color:#f7fcfa;">
+                    <div class="row">
+                        <!-- Filter Form -->
+                        <div class="col-lg-6 col-md-10 mb-3">
+                            <div class="filter-form p-3">
+                                <form id="filterForm">
+                                    <div class="form-row">
+                                        <div class="col-md-6 mb-3">
+                                            <label for="startDate">Start Date</label>
+                                            <input type="date" class="form-control" id="startDate" name="startDate">
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label for="endDate">End Date</label>
+                                            <input type="date" class="form-control" id="endDate" name="endDate">
+                                        </div>
+                                    </div>
+                                    <div class="d-flex justify-content-center mt-3">
+                                        <button type="button" class="btn btn-primary btn-lg" onclick="fetchFeedback()"
+                                                style="width: 300px;">Filter
+                                        </button>
+                                    </div>
+                                </form>
                             </div>
                         </div>
-                        <div class="d-flex justify-content-center mt-3">
-                            <button type="button" class="btn btn-primary btn-lg" onclick="fetchFeedback()" style="width: 300px;">Filter</button>
+
+                        <!-- Bar Chart -->
+                        <div class="col-lg-6 col-md-10">
+                            <div class="p-3">
+                                <canvas id="feedbackChart" style="max-width: 100%; height: auto;"></canvas>
+                            </div>
                         </div>
-                    </form>
+                    </div>
                 </div>
-            </div>
 
-            <!-- Bar Chart -->
-            <div class="col-lg-6 col-md-10">
-                <div class="p-3">
-                    <canvas id="feedbackChart" style="max-width: 100%; height: auto;"></canvas>
+
+                <!-- Dashboard Layout -->
+                <div class="container mb-4" style="background-color:#f7fcfa;">
+                    <div class="table-container">
+                        <table class="table table-striped table-bordered" id="feedbackTable">
+                            <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Age</th>
+                                <th>Gender</th>
+                                <th>Pwd</th>
+                                <th>Organization</th>
+                                <th>Department</th>
+                                <th>Service</th>
+                                <th>Interacted With</th>
+                                <th>Person Attitude</th>
+                                <th>Recommend</th>
+                                <th>Comments</th>
+                                <th>Phone</th>
+                                <th>Email</th>
+                                <th>Create Date</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+
+                            <!-- More rows as needed -->
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
+                <div class="horizontal-line"></div>
+                <div class="container mb-4" style="background-color:#f7fcfa;">
+                    <div class="row mt-4" style="background-color:;">
+                        <div class="col-sm-10">
+                            <h5>Department Visits</h5>
+                            <canvas id="departmentPieChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="horizontal-line"></div>
             </div>
-        </div>
+        </main>
     </div>
-
-
-
-    <!-- Dashboard Layout -->
-    <div class="container mb-4" style="background-color:#f7fcfa;">
-        <div class="table-container">
-            <table class="table table-striped table-bordered" id="feedbackTable">
-                <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Age</th>
-                    <th>Gender</th>
-                    <th>Pwd</th>
-                    <th>Organization</th>
-                    <th>Department</th>
-                    <th>Service</th>
-                    <th>Interacted With</th>
-                    <th>Person Attitude</th>
-                    <th>Recommend</th>
-                    <th>Comments</th>
-                    <th>Phone</th>
-                    <th>Email</th>
-                    <th>Create Date</th>
-                </tr>
-                </thead>
-                <tbody>
-
-                <!-- More rows as needed -->
-                </tbody>
-            </table>
-        </div>
-    </div>
-    <div class="horizontal-line"></div>
-    <div class="container mb-4" style="background-color:#f7fcfa;">
-        <div class="row mt-4" style="background-color:;">
-            <div class="col-sm-10">
-                <h5>Department Visits</h5>
-                <canvas id="departmentPieChart"></canvas>
-            </div>
-        </div>
-    </div>
-    <div class="horizontal-line"></div>
-</div>
 </div>
 
 <!-- Bootstrap JS and dependencies -->
@@ -307,179 +315,177 @@ form {
 <!-- JavaScript to handle charts -->
 <script>
 
-   let feedbackChart;  // Global variable to store the chart instance
+    let feedbackChart;  // Global variable to store the chart instance
 
-    function loadFeedbackChart() {
-        fetch('/user-stats')
-            .then(response => response.json())
-            .then(data => {
-                const ctx = document.getElementById('feedbackChart').getContext('2d');
+     function loadFeedbackChart() {
+         fetch('/user-stats')
+             .then(response => response.json())
+             .then(data => {
+                 const ctx = document.getElementById('feedbackChart').getContext('2d');
 
-                // Destroy the existing chart instance if it exists
-                if (feedbackChart) {
-                    feedbackChart.destroy();
-                }
+                 // Destroy the existing chart instance if it exists
+                 if (feedbackChart) {
+                     feedbackChart.destroy();
+                 }
 
-                // Define custom sort order for quarters
-                const quarterOrder = {
-                    'Q3': 1,
-                    'Q4': 2,
-                    'Q1': 3,
-                    'Q2': 4
-                };
+                 // Define custom sort order for quarters
+                 const quarterOrder = {
+                     'Q3': 1,
+                     'Q4': 2,
+                     'Q1': 3,
+                     'Q2': 4
+                 };
 
-                // Prepare labels and counts
-                let labels = data.map(item => {
-                    let quarterLabel = '';
-                    switch (item.quarter) {
-                        case 'Q1':
-                            quarterLabel = `Q1 July - Sept (${item.year})`;
-                            break;
-                        case 'Q2':
-                            quarterLabel = `Q2 Oct - Dec (${item.year})`;
-                            break;
-                        case 'Q3':
-                            quarterLabel = `Q3 Jan - March (${item.year})`;
-                            break;
-                        case 'Q4':
-                            quarterLabel = `Q4 April - Jun (${item.year})`;
-                            break;
-                        default:
-                            quarterLabel = `Unknown (${item.year})`;
-                    }
-                    return { label: quarterLabel, sortOrder: quarterOrder[item.quarter] };
-                });
+                 // Prepare labels and counts
+                 let labels = data.map(item => {
+                     let quarterLabel = '';
+                     switch (item.quarter) {
+                         case 'Q1':
+                             quarterLabel = `Q1 July - Sept (${item.year})`;
+                             break;
+                         case 'Q2':
+                             quarterLabel = `Q2 Oct - Dec (${item.year})`;
+                             break;
+                         case 'Q3':
+                             quarterLabel = `Q3 Jan - March (${item.year})`;
+                             break;
+                         case 'Q4':
+                             quarterLabel = `Q4 April - Jun (${item.year})`;
+                             break;
+                         default:
+                             quarterLabel = `Unknown (${item.year})`;
+                     }
+                     return { label: quarterLabel, sortOrder: quarterOrder[item.quarter] };
+                 });
 
-                // Sort labels and counts based on the defined order
-                labels.sort((a, b) => a.sortOrder - b.sortOrder);
-                const sortedLabels = labels.map(item => item.label);
-                const sortedCounts = labels.map(item => {
-                    const originalItem = data.find(d => {
-                        let qLabel = '';
-                        switch (d.quarter) {
-                            case 'Q1':
-                                qLabel = `Q1 July - Sept (${d.year})`;
-                                break;
-                            case 'Q2':
-                                qLabel = `Q2 Oct - Dec (${d.year})`;
-                                break;
-                            case 'Q3':
-                                qLabel = `Q3 Jan - March (${d.year})`;
-                                break;
-                            case 'Q4':
-                                qLabel = `Q4 April - Jun (${d.year})`;
-                                break;
-                            default:
-                                qLabel = `Unknown (${d.year})`;
-                        }
-                        return qLabel === item.label;
-                    });
-                    return originalItem ? originalItem.count : 0;
-                });
+                 // Sort labels and counts based on the defined order
+                 labels.sort((a, b) => a.sortOrder - b.sortOrder);
+                 const sortedLabels = labels.map(item => item.label);
+                 const sortedCounts = labels.map(item => {
+                     const originalItem = data.find(d => {
+                         let qLabel = '';
+                         switch (d.quarter) {
+                             case 'Q1':
+                                 qLabel = `Q1 July - Sept (${d.year})`;
+                                 break;
+                             case 'Q2':
+                                 qLabel = `Q2 Oct - Dec (${d.year})`;
+                                 break;
+                             case 'Q3':
+                                 qLabel = `Q3 Jan - March (${d.year})`;
+                                 break;
+                             case 'Q4':
+                                 qLabel = `Q4 April - Jun (${d.year})`;
+                                 break;
+                             default:
+                                 qLabel = `Unknown (${d.year})`;
+                         }
+                         return qLabel === item.label;
+                     });
+                     return originalItem ? originalItem.count : 0;
+                 });
 
-                // Create a new chart instance
-                feedbackChart = new Chart(ctx, {
-                    type: 'bar',
-                    data: {
-                        labels: sortedLabels,
-                        datasets: [{
-                            label: 'Feedback Count',
-                            data: sortedCounts,
-                            backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                            borderColor: 'rgba(75, 192, 192, 1)',
-                            borderWidth: 1
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false, // Ensures the chart adapts to container size
-                        scales: {
-                            x: {
-                                beginAtZero: true,
-                                title: {
-                                    display: true,
-                                    text: 'Quarters'
-                                }
-                            },
-                            y: {
-                                beginAtZero: true,
-                                title: {
-                                    display: true,
-                                    text: 'Count'
-                                }
-                            }
-                        }
-                    }
-                });
-            })
-            .catch(error => {
-                console.error('Error fetching feedback:', error);
-            });
-    }
+                 // Create a new chart instance
+                 feedbackChart = new Chart(ctx, {
+                     type: 'bar',
+                     data: {
+                         labels: sortedLabels,
+                         datasets: [{
+                             label: 'Feedback Count',
+                             data: sortedCounts,
+                             backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                             borderColor: 'rgba(75, 192, 192, 1)',
+                             borderWidth: 1
+                         }]
+                     },
+                     options: {
+                         responsive: true,
+                         maintainAspectRatio: false, // Ensures the chart adapts to container size
+                         scales: {
+                             x: {
+                                 beginAtZero: true,
+                                 title: {
+                                     display: true,
+                                     text: 'Quarters'
+                                 }
+                             },
+                             y: {
+                                 beginAtZero: true,
+                                 title: {
+                                     display: true,
+                                     text: 'Count'
+                                 }
+                             }
+                         }
+                     }
+                 });
+             })
+             .catch(error => {
+                 console.error('Error fetching feedback:', error);
+             });
+     }
 
-    document.addEventListener('DOMContentLoaded', loadFeedbackChart);
+     document.addEventListener('DOMContentLoaded', loadFeedbackChart);
 
 
-    function loadDepartmentPieChart() {
-        const startDate = '2024-01-01'; // Replace with your desired start date
-        const endDate = '2024-12-31';   // Replace with your desired end date
+     function loadDepartmentPieChart() {
+         const startDate = '2024-01-01'; // Replace with your desired start date
+         const endDate = '2024-12-31';   // Replace with your desired end date
 
-        fetch(`/department-pie-chart?start_date=${startDate}&end_date=${endDate}`)
-            .then(response => response.json())
-            .then(data => {
-                const ctx = document.getElementById('departmentPieChart').getContext('2d');
-                new Chart(ctx, {
-                    type: 'bar',
-                    data: {
-                        labels: data.map(item => item.department),
-                        datasets: [{
-                            label: 'Department Visits',
-                            data: data.map(item => item.count),
-                            backgroundColor: [
-                                'rgba(255, 99, 132, 0.2)',
-                                'rgba(54, 162, 235, 0.2)',
-                                'rgba(255, 206, 86, 0.2)',
-                                'rgba(75, 192, 192, 0.2)',
-                                'rgba(153, 102, 255, 0.2)',
-                                'rgba(255, 159, 64, 0.2)'
-                            ],
-                            borderColor: [
-                                'rgba(255, 99, 132, 1)',
-                                'rgba(54, 162, 235, 1)',
-                                'rgba(255, 206, 86, 1)',
-                                'rgba(75, 192, 192, 1)',
-                                'rgba(153, 102, 255, 1)',
-                                'rgba(255, 159, 64, 1)'
-                            ],
-                            borderWidth: 1
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        plugins: {
-                            legend: {
-                                position: 'top',
-                            },
-                            tooltip: {
-                                callbacks: {
-                                    label: function(tooltipItem) {
-                                        return tooltipItem.label + ': ' + tooltipItem.raw + ' visits';
-                                    }
-                                }
-                            }
-                        }
-                    }
-                });
-            });
-    }
+         fetch(`/department-pie-chart?start_date=${startDate}&end_date=${endDate}`)
+             .then(response => response.json())
+             .then(data => {
+                 const ctx = document.getElementById('departmentPieChart').getContext('2d');
+                 new Chart(ctx, {
+                     type: 'bar',
+                     data: {
+                         labels: data.map(item => item.department),
+                         datasets: [{
+                             label: 'Department Visits',
+                             data: data.map(item => item.count),
+                             backgroundColor: [
+                                 'rgba(255, 99, 132, 0.2)',
+                                 'rgba(54, 162, 235, 0.2)',
+                                 'rgba(255, 206, 86, 0.2)',
+                                 'rgba(75, 192, 192, 0.2)',
+                                 'rgba(153, 102, 255, 0.2)',
+                                 'rgba(255, 159, 64, 0.2)'
+                             ],
+                             borderColor: [
+                                 'rgba(255, 99, 132, 1)',
+                                 'rgba(54, 162, 235, 1)',
+                                 'rgba(255, 206, 86, 1)',
+                                 'rgba(75, 192, 192, 1)',
+                                 'rgba(153, 102, 255, 1)',
+                                 'rgba(255, 159, 64, 1)'
+                             ],
+                             borderWidth: 1
+                         }]
+                     },
+                     options: {
+                         responsive: true,
+                         plugins: {
+                             legend: {
+                                 position: 'top',
+                             },
+                             tooltip: {
+                                 callbacks: {
+                                     label: function(tooltipItem) {
+                                         return tooltipItem.label + ': ' + tooltipItem.raw + ' visits';
+                                     }
+                                 }
+                             }
+                         }
+                     }
+                 });
+             });
+     }
 
-    document.addEventListener('DOMContentLoaded', function() {
-        loadFeedbackChart();
-        loadDepartmentPieChart();
-    });
-</script>
-<!-- JavaScript to handle dynamic content -->
-<script>
+     document.addEventListener('DOMContentLoaded', function() {
+         loadFeedbackChart();
+         loadDepartmentPieChart();
+     });
+
     function showContent(page) {
         fetch(`/content/${page}`)
             .then(response => response.text())

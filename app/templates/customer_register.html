@@ -56,7 +56,11 @@
 <div class="container-fluid">
     <div class="row" style="min-height: 100vh;">
         <!-- Sidebar -->
-        <nav class="col-12 col-md-3 col-lg-2 text-white sidebar py-3" style="background-color: #74be95;">
+         <button class="btn btn-success d-md-none" type="button" data-toggle="collapse" data-target="#sidebar"
+                aria-expanded="false" aria-controls="sidebar">
+            <i class="fas fa-bars"></i>
+        </button>
+        <nav id="sidebar" class="collapse d-md-block col-md-3 col-lg-2 text-white sidebar py-3" style="background-color: #74be95;">
             <ul class="nav flex-column">
                 <li class="nav-item">
                     <a class="nav-link active text-white" href="/dashboard" onclick="showContent('dashboard')">
@@ -124,10 +128,6 @@
         </main>
     </div>
 </div>
-
-<footer class="text-center" style="flex-shrink: 0;">
-    {% include 'footer.html' %}
-</footer>
 
 <!-- Bootstrap JS and dependencies -->
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
