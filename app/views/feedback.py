@@ -219,7 +219,6 @@ def send_message():
 
 
 @bp.route('/customer/feedback', methods=['GET', 'POST'])
-@login_required
 def customer_feedback():
     try:
         print(request.form)
