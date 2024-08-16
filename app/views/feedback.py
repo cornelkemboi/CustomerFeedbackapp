@@ -191,7 +191,7 @@ def send_message():
         recipients = data.get('phone')
         auth_token = os.getenv('SMS_TOKEN')
         if recipients:
-            text_message = ("Thank you for visiting KIPPRA and for accessing our products and services. Your feedback "
+            text_message = ("Thank you for visiting KIPPRA and accessing our products and services. Your feedback "
                             "is valuable to us. Feel free to rate us by clicking the following address "
                             "https://feedback.kippra.or.ke/")
             if not text_message or not recipients or not auth_token:
