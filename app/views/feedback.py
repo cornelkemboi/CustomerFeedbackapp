@@ -192,9 +192,8 @@ def send_message():
         auth_token = os.getenv('SMS_TOKEN')
         if recipients:
             text_message = ("Thank you for visiting KIPPRA and for accessing our products and services. Your feedback "
-                            "on how we can improve these services is valuable to us. Feel free to rate us and provide"
-                            " feedback by clicking the following address https://feedback.kippra.or.ke/ . Note: Your "
-                            "data will be processed and protected as stipulated in the Data Protection Act 2019")
+                            "is valuable to us. Feel free to rate us by clicking the following address "
+                            "https://feedback.kippra.or.ke/")
             if not text_message or not recipients or not auth_token:
                 return jsonify({'success': False}), 400
             response = send_text_message(text_message, recipients, auth_token)
