@@ -1,4 +1,3 @@
-import pytz
 import os
 from datetime import datetime
 
@@ -8,7 +7,7 @@ from sqlalchemy import func, and_
 from sqlalchemy.exc import NoResultFound
 
 from app import db
-from app.config import send_text_message
+from app.config import send_text_message, validate_phone_number, is_valid_email, is_safe_input
 from app.models import (SurveyResponse, SurveyResponseDepartment, Department, Quarter,
                         ReceiptionRecords, get_eat_now)
 from app.schemas import DepartmentSchema, SurveyResponseSchema, DepartmentPieChartSchema, UserStatsSchema
@@ -236,8 +235,25 @@ def customer_feedback():
             person_attitude = request.form.get('person_attitude')
             recommend = request.form.get('recommend')
             comments = request.form.get('comments')
-            phone = request.form.get('phone')
             email = request.form.get('email')
+
+            fields = [name, organization, service, interacted_with, comments]
+            for field in fields:
+                if not is_safe_input(field):
+                    flash(f"Invalid input detected! on {field}", 'danger')
+                    return render_template('index.html')
+
+            if email and not is_valid_email(email):
+                flash('Invalid Email address provided', 'danger')
+                return render_template('index.html')
+
+            phone = request.form.get('phone')
+
+            # Validate the phone number based on the region (you can pass 'None' for auto-detection)
+            is_valid, result = validate_phone_number(phone)
+            if phone and not is_valid:
+                flash(result, 'danger')
+                return render_template('index.html')
             create_date = get_eat_now()
 
             # Insert data into the survey_responses table
@@ -268,7 +284,7 @@ def customer_feedback():
                 db.session.add(new_response_department)
 
             db.session.commit()
-            flash('Form submitted successfully!', 'success')
+            # flash('Form submitted successfully!', 'success')
 
             kippra_website = 'https://kippra.or.ke/'
             feedback = (f"Thank you for your feedback! We appreciate your visit to our"

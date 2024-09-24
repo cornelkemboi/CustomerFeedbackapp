@@ -41,6 +41,21 @@
         <div class="col-10" style="background-color:#f2f5f3;">
             <h5 class="text-center font-weight-bold" style="color: #52ad7b;">Quick Online Customer Satisfaction Survey</h5>
            <form method="POST" action="/customer/feedback">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                  {% if messages %}
+                    <div class="flashes">
+                      {% for category, message in messages %}
+                        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                          {{ message }}
+                          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                          </button>
+                        </div>
+                      {% endfor %}
+                    </div>
+                  {% endif %}
+                {% endwith %}
+
                 <p class="lead" style="color: #52ad7b;">Our dear customer, we value your feedback. Please take time to fill our
                     short
                     questionnaire below:</p>
@@ -195,11 +210,11 @@
                         details:
                     </label>
                     <div class="form-row">
-                        <div class="form-group col-md-6 d-flex">
+                        <div class="form-group col-md-6 d-flex align-items-center">
                             <label for="phone" class="mr-2" style="color: #52ad7b;">Phone Number:</label>
-                            <input type="tel" class="form-control w-75" id="phone" name="phone"
-                                   placeholder="+2547.....">
+                            <input type="tel" class="form-control w-75" id="phone" name="phone" placeholder="712.....">
                         </div>
+
                         <div class="form-group col-md-6 d-flex align-items-center">
                             <label for="email" class="mr-2" style="color: #52ad7b;">Email Address:</label>
                             <input type="email" class="form-control w-75" id="email" name="email"
@@ -228,6 +243,37 @@
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    const phoneInputField = document.querySelector("#phone");
+    const phoneInput = window.intlTelInput(phoneInputField, {
+        initialCountry: "auto",
+        geoIpLookup: function(success, failure) {
+            fetch("https://ipinfo.io?token=your_token", {
+                mode: 'no-cors'
+            }).then(function(resp) {
+                let countryCode = (resp && resp.country) ? resp.country : "KE";
+                success(countryCode);
+            }).catch(function() {
+                success("KE");
+            });
+        },
+        utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/js/utils.js"
+    });
+
+    // On form submission, send the full phone number with country prefix
+    document.querySelector("form").addEventListener("submit", function(e) {
+        const phoneNumber = phoneInput.getNumber();  // Gets the full phone number with country code
+        document.querySelector("#phone").value = phoneNumber;  // Set the full number in the input field
+    });
+
+    $(document).ready(function() {
+    // Set a timeout to hide the flash messages after 10 seconds
+    setTimeout(function() {
+      $('.flashes').fadeOut('slow');  // Fades out the flash messages
+    }, 10000); // Time in milliseconds (10000 ms = 10 seconds)
+  });
+</script>
+
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         // Function to populate departments
